@@ -1,0 +1,22 @@
+{
+    "bot_api_key" : "insert your bale bot api here",
+    "save_file" : "data.csv",
+    "houseconfig" :{
+        "districts" : [],
+        "credit" : {
+            "min" : 500000,
+            "max" : 1500000000
+        },
+        "rent" : {
+            "min" : 10000000,
+            "max" : 60000000
+        },
+        "rooms" : "بیشتر",
+        "size" : {
+            "min" : 100,
+            "max" : 250
+        }
+    },
+    "chat_ids" : [6425583673]
+}
+
