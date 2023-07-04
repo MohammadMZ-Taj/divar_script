@@ -62,7 +62,7 @@ def get_data():
         for item in postlist:
             if item['widget_type'] != 'POST_ROW':
                 continue
-            data = {x:item['data'][x] for x in item['data'] if x in ['token', 'title', 'top_description_text', 'middle_description_text', 'bottom_description_text', 'image_count']}
+            data = {x:item['data'][x] for x in ['token', 'title', 'top_description_text', 'middle_description_text', 'bottom_description_text', 'image_count']}
             if item['data']['image_count'] > 0 :
                 data['image_url'] = item['data']['image_url'][1]['src']
             else:
