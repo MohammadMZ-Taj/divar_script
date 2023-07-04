@@ -9,8 +9,11 @@ for example this chat is the main one https://web.bale.ai/chat/6425583673
 and the id is 6425583673
 add a , between each chat id
 # save file
-set the save_file address with .csv
-
+set a save_file address with .csv
+# not sent file
+set a file address with .csv for saving data that was not sent due to problems
+# proxies
+set your proxys here
 
 you can change the houseconfig for the app to find diffrent houses
 # rooms is one of these

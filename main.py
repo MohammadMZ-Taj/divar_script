@@ -9,8 +9,7 @@ with open('constants.json' , 'r') as readconst:
     const = json.load(readconst)
 with open('config.json', 'r', encoding='utf-8') as readconfig:
     config = json.load(readconfig)
-# tartibe data avaz shode dorosesh kon
-# not_sent data ok she
+
 def get_district_code():
     out = []
     for district in config['houseconfig']['districts']:
@@ -47,7 +46,7 @@ def payload_json_schema():
 
 def get_data():
     print('getting data from divar')
-    out = [['token', 'title', 'top_description_text', 'middle_description_text', 'bottom_description_text', 'image_count', 'image_url']]
+    out = []
     index = 0
     while True:
         print('getting page : ',index)
@@ -63,26 +62,25 @@ def get_data():
         for item in postlist:
             if item['widget_type'] != 'POST_ROW':
                 continue
-            # data = [item['data'][x] for x in item['data'] if x in ['token', 'title', 'top_description_text', 'middle_description_text', 'bottom_description_text', 'image_count']]
-            temp = item['data']
-            data = [temp['token'], temp['title'], temp['top_description_text'], temp['middle_description_text'], temp['bottom_description_text'], temp['image_count']]
+            data = {x:item['data'][x] for x in item['data'] if x in ['token', 'title', 'top_description_text', 'middle_description_text', 'bottom_description_text', 'image_count']}
             if item['data']['image_count'] > 0 :
-                data.append(item['data']['image_url'][1]['src'])
+                data['image_url'] = item['data']['image_url'][1]['src']
             else:
                 # placeholder for image url cuz its a list
-                data.append("")
+                data['image_url'] = ""
             out.append(data)
         index += 1
         time.sleep(1)
-    print(f'found {len(out)-1} items')
+    print(f'found {len(out)} items')
     return out
 
 def save_data(list):
     print('saving data...')
     with open(config['save_file'] , "w")as csvfile:
         writer = csv.writer(csvfile)
+        writer.writerow(list[0])
         for item in list:
-            writer.writerow(item)
+            writer.writerow(item.values())
 
 def create_save_if_not_exist():
     if not os.path.exists(config['save_file']):
@@ -91,13 +89,13 @@ def create_save_if_not_exist():
             createwriter.writerow(['token', 'title', 'top_description_text', 'middle_description_text', 'bottom_description_text', 'image_count', 'image_url'])
 
 def get_data_diffrence(data):
-    data1 = pd.DataFrame(data[1:],columns=data[0])
+    data1 = pd.DataFrame(data)
     data2 = pd.read_csv(config['save_file'])
     result1 = data1[~data1['token'].isin(data2['token'])]
     return result1.values.tolist()
 
 def house_info(data):
-    return f"title : {data[1]}\n\n{data[2]}\n{data[3]}\n{data[4]}\nnumber of images in website : {data[5]}\n\nlink to the item : https://divar.ir/v/{data[0]}"
+    return f"title : {data[1]}\n\n{data[2]}\n{data[3]}\n{data[4]}\nnumber of images in website : {data[0]}\n\nlink to the item : https://divar.ir/v/{data[5]}"
 
 def send_message(chat_id, text):
     for i in range(5):
@@ -128,13 +126,17 @@ def send_photo(chat_id, photo_url, caption):
     return False
 
 def save_not_sent(itemlist):
-    with open(config['not_sent_file'] , "w")as csvfile:
-        writer = csv.writer(csvfile)
-        for item in itemlist:
-            writer.writerow(item)
+    print('saving not sent messages')
+    if len(itemlist)>0:
+        with open(config['not_sent_file'] , "w")as csvfile:
+            writer = csv.writer(csvfile)
+            for item in itemlist:
+                writer.writerow(item)
+    else:
+        os.remove(config['not_sent_file'])
 
 def notify_user(chat_id, row):
-    if row[5] >= 1:
+    if int(row[0]) >= 1:
         status= send_photo(chat_id, row[6], house_info(row))
     else:
         status= send_message(chat_id, house_info(row))
@@ -144,14 +146,14 @@ def notify_all(chat_id,data):
     print(f'sending {len(data)} items to user {chat_id}')
     not_sent = []
     for i, row in enumerate(data):
-        # if i >= 19:
-        #     print('waitng for 60sec befor sending more messages')
-        #     time.sleep(60)
+        if i >= 19:
+            print('waitng for 60sec befor sending more messages')
+            time.sleep(60)
         sent = notify_user(chat_id , row)
         if not sent:
             print(f"coudnt sent to user {chat_id} this message :{row}")
             not_sent.append([chat_id] + row)
-    print('saving not sent messages')
+    
     return not_sent
 
 def get_not_sent_data():
@@ -164,12 +166,15 @@ def get_not_sent_data():
     return out
 
 def main():
-    get_not_sent_data()
-    create_save_if_not_exist()
+    not_sent_data = []
+    for item in get_not_sent_data():
+        if not notify_user(item[0], item[1:]):
+            not_sent_data.append(item)
     data = get_data()
-
+    create_save_if_not_exist()
     for chat_id in config['chat_ids']:
-        notify_all(chat_id, get_data_diffrence(data))
+        not_sent_data += (notify_all(chat_id, get_data_diffrence(data)))
+    save_not_sent(not_sent_data)
     save_data(data)
 
 if __name__=='__main__':
