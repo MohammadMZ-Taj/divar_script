@@ -16,7 +16,7 @@ set a file address with .csv for saving data that was not sent due to problems
 set your proxys here
 
 you can change the houseconfig for the app to find diffrent houses
-# districts shoule be one or more of these
+# districts should be one or more of these
 'آب جوار'
 'آبیاری'
 'آرامستان دارالرحمه'
