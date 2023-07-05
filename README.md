@@ -12,6 +12,14 @@ add a , between each chat id
 set a save_file address with .csv
 # not sent file
 set a file address with .csv for saving data that was not sent due to problems
+# romms
+rooms can be 
+'بدون اتاق'
+'یک'
+'دو'
+'سه'
+'چهار'
+'بیشتر'
 # proxies
 set your proxys here
 

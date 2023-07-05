@@ -33,15 +33,49 @@ def payload_json_schema():
     
     if config['houseconfig']['districts']:
         out['districts'] = {"vacancies": get_district_code()}
-    if config['houseconfig']['credit']['max'] != 0 and config['houseconfig']['credit']['min'] != 0:
+    if config['houseconfig']['credit']['max'] != 0 or config['houseconfig']['credit']['min'] != 0:
         out['credit'] = min_max_value(config['houseconfig']['credit']['min'], config['houseconfig']['credit']['max'])
-    if config['houseconfig']['rent']['max'] != 0 and config['houseconfig']['rent']['min'] != 0:
+    if config['houseconfig']['rent']['max'] != 0 or config['houseconfig']['rent']['min'] != 0:
         out['rent'] = min_max_value(config['houseconfig']['rent']['min'], config['houseconfig']['rent']['max'])
-    if config['houseconfig']['size']['max'] != 0 and config['houseconfig']['size']['min'] != 0:
+    if config['houseconfig']['size']['max'] != 0 or config['houseconfig']['size']['min'] != 0:
         out['size'] = min_max_value(config['houseconfig']['size']['min'], config['houseconfig']['size']['max'])
     if config['houseconfig']['rooms'] != "":
         out['rooms'] = {'value' : config['houseconfig']['rooms']} 
     
+    return out
+
+def min_max_value_string(min, max):
+    if max>min:
+        return f"{min}-{max}"
+    else:
+        return f"{min}-"
+
+def rooms_to_eng(string):
+    if string == 'بدون اتاق':
+        return 'noroom'
+    elif string == 'یک':
+        return '1'
+    elif string == 'دو':
+        return '2'
+    elif string == 'سه':
+        return '3'
+    elif string == 'چهار':
+        return '4'
+    elif string == 'بیشتر':
+        return 'more'
+
+def page_0_url():
+    out = ""
+    if config['houseconfig']['credit']['max'] != 0 or config['houseconfig']['credit']['min'] != 0:
+        out += f"credit={min_max_value_string(config['houseconfig']['credit']['min'], config['houseconfig']['credit']['max'])}&"
+    if config['houseconfig']['rent']['max'] != 0 or config['houseconfig']['rent']['min'] != 0:
+        out += f"rent={min_max_value_string(config['houseconfig']['rent']['min'], config['houseconfig']['rent']['max'])}&"
+    if config['houseconfig']['size']['max'] != 0 or config['houseconfig']['size']['min'] != 0:
+        out += f"size={min_max_value_string(config['houseconfig']['size']['min'], config['houseconfig']['size']['max'])}&"
+    if config['houseconfig']['rooms'] != "":
+        out += f"rooms={rooms_to_eng(config['houseconfig']['rooms'])}&"
+    if out != "" and out[-1] == '&':
+        return out[:-1]
     return out
 
 def get_data():
@@ -50,11 +84,14 @@ def get_data():
     index = 0
     while True:
         print('getting page : ',index)
-        payload = {"page":index,
-                   "json_schema" : payload_json_schema()}
-        json_payload = json.dumps(payload)
-        header = {"Content-Type": "application/json"}
-        response = requests.post(const['api_url'], data=json_payload, headers=header)
+        if index > 0:
+            payload = {"page":index,
+                       "json_schema" : payload_json_schema()}
+            json_payload = json.dumps(payload)
+            header = {"Content-Type": "application/json"}
+            response = requests.post(const['api_url'], data=json_payload, headers=header)
+        else:
+            response = requests.get(const['api_url_page0']+page_0_url())
         page = response.json()
         postlist = page['web_widgets']['post_list']
         if not postlist:
