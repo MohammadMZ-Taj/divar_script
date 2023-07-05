@@ -105,10 +105,10 @@ def send_message(chat_id, text):
         header = {"Content-Type": "application/json"}
         try:
             response = requests.post(url, data=json_payload, headers=header, proxies=config['proxies'])
+            if response.status_code == 200:
+                return True
         except Exception:
-            return False
-        if response.status_code == 200:
-            return True
+            pass
     return False
 
 def send_photo(chat_id, photo_url, caption):
@@ -119,10 +119,11 @@ def send_photo(chat_id, photo_url, caption):
         header = {"Content-Type": "application/json"}
         try:
             response = requests.post(url, data=json_payload, headers=header, proxies=config['proxies'])
+            if response.status_code == 200:
+                return True
         except Exception:
-            return False
-        if response.status_code == 200:
-            return True
+            pass
+
     return False
 
 def save_not_sent(itemlist):
