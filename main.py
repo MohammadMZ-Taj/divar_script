@@ -10,6 +10,8 @@ with open('constants.json' , 'r') as readconst:
 with open('config.json', 'r', encoding='utf-8') as readconfig:
     config = json.load(readconfig)
 
+sent_messages = 1
+
 def get_district_code():
     out = []
     for district in config['houseconfig']['districts']:
@@ -171,10 +173,16 @@ def save_not_sent(itemlist):
             for item in itemlist:
                 writer.writerow(item)
     else:
-        os.remove(config['not_sent_file'])
+        if os.path.exists(config['not_sent_file']):
+            os.remove(config['not_sent_file'])
 
 def notify_user(chat_id, row):
-    if int(row[0]) >= 1:
+    global sent_messages
+    if sent_messages%20 == 0:
+        print('waitng for 60sec befor sending more messages')
+        time.sleep(60)
+    sent_messages += 1
+    if int(row[5]) >= 1:
         status= send_photo(chat_id, row[6], house_info(row))
     else:
         status= send_message(chat_id, house_info(row))
@@ -183,10 +191,7 @@ def notify_user(chat_id, row):
 def notify_all(chat_id,data):
     print(f'sending {len(data)} items to user {chat_id}')
     not_sent = []
-    for i, row in enumerate(data):
-        if i >= 19:
-            print('waitng for 60sec befor sending more messages')
-            time.sleep(60)
+    for row in data:
         sent = notify_user(chat_id , row)
         if not sent:
             print(f"coudnt sent to user {chat_id} this message :{row}")
