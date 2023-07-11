@@ -83,18 +83,22 @@ def page_0_url():
 def get_data():
     print('getting data from divar')
     out = []
+    last_post_date = 0
     index = 0
     while True:
         print('getting page : ',index)
         if index > 0:
             payload = {"page":index,
                        "json_schema" : payload_json_schema()}
+            if last_post_date != 0:
+                payload['last-post-date'] = last_post_date
             json_payload = json.dumps(payload)
             header = {"Content-Type": "application/json"}
             response = requests.post(const['api_url'], data=json_payload, headers=header)
         else:
             response = requests.get(const['api_url_page0']+page_0_url())
         page = response.json()
+        last_post_date = page['last_post_date']
         postlist = page['web_widgets']['post_list']
         if not postlist:
             break
