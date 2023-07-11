@@ -138,7 +138,12 @@ def get_data_diffrence(data):
     return result1.values.tolist()
 
 def house_info(data):
-    return f"title : {data[1]}\n\n{data[2]}\n{data[3]}\n{data[4]}\nnumber of images in website : {data[5]}\n\nlink to the item : https://divar.ir/v/{data[0]}"
+    text = f"**{data[1]}**\n\n{data[2]}\n{data[3]}\n{data[4]}\n"
+    if data[5] > 0:
+        text += f"تعداد عکس : {data[5]}\n"
+    text += f"\nhttps://divar.ir/v/{data[0]}"
+    return text
+    
 
 def send_message(chat_id, text):
     for i in range(5):
