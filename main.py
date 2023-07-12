@@ -4,6 +4,7 @@ import csv
 import time
 import pandas as pd
 import os
+from bs4 import BeautifulSoup
 
 with open('constants.json' , 'r') as readconst:
     const = json.load(readconst)
@@ -80,6 +81,31 @@ def page_0_url():
         return out[:-1]
     return out
 
+def get_more_info(token):
+    print(f'getting additional info for {token}')
+    out = {'land area' : '',
+           'area' : '',
+           'Year of construction' : ''}
+    for _ in range(5):
+        response = requests.get(const['page_url']+token)
+        if response.status_code == 200:
+            break
+        time.sleep(1)
+    soup = BeautifulSoup(response.content, "html.parser")
+    top_info = soup.find_all('div', class_ = 'kt-group-row-item kt-group-row-item--info-row')
+    for item in top_info:
+        subitems = item.find_all('span')
+        if subitems[0].text == 'متراژ':
+            out['area'] = subitems[1].text
+        if subitems[0].text == 'ساخت':
+            out['Year of construction'] = subitems[1].text
+    info = soup.find_all('div', class_ = 'kt-base-row kt-base-row--large kt-unexpandable-row')
+    for item in info:
+        if item.find("p", class_ = 'kt-base-row__title kt-unexpandable-row__title').text == 'متراژ زمین':
+            out['land area'] = item.find("p", class_ = 'kt-unexpandable-row__value').text
+            break
+    return out
+
 def get_data():
     print('getting data from divar')
     out = []
@@ -109,11 +135,11 @@ def get_data():
             if item['data']['image_count'] > 0 :
                 data['image_url'] = item['data']['image_url'][1]['src']
             else:
-                # placeholder for image url cuz its a list
+                # placeholder for image url cuz it was a list
                 data['image_url'] = ""
+            data.update(get_more_info(data['token']))
             out.append(data)
         index += 1
-        time.sleep(1)
     print(f'found {len(out)} items')
     return out
 
@@ -141,10 +167,15 @@ def house_info(data):
     text = f"**{data[1]}**\n\n{data[2]}\n{data[3]}\n{data[4]}\n"
     if data[5] > 0:
         text += f"تعداد عکس : {data[5]}\n"
-    text += f"\nhttps://divar.ir/v/{data[0]}"
+    if data[7] != "":
+        text +=f"متراژ زمین : {data[7]}\n"
+    if data[8] != "":
+        text +=f"متراژ خانه : {data[8]}\n"
+    if data[9] != "":
+        text +=f"سال ساخت : {data[9]}\n"
+    text += f"\n{const['page_url']}{data[0]}"
     return text
     
-
 def send_message(chat_id, text):
     for i in range(5):
         url = f"https://api.telegram.org/bot{config['bot_api_key']}/sendMessage"

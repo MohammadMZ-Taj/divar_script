@@ -1,6 +1,7 @@
 {
     "api_url" : "https://api.divar.ir/v8/web-search/6/house-villa-rent",
     "api_url_page0" : "https://api.divar.ir/v8/web-search/shiraz/rent-villa?",
+    "page_url" : "https://divar.ir/v/",
     "district_codes" : {"آب جوار": "1404",
                         "آبیاری": "1359",
                         "آرامستان دارالرحمه": "1340",
