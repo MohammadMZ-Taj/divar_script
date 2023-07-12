@@ -165,7 +165,7 @@ def get_data_diffrence(data):
 
 def house_info(data):
     text = f"**{data[1]}**\n\n{data[2]}\n{data[3]}\n{data[4]}\n"
-    if data[5] > 0:
+    if int(data[5]) > 0:
         text += f"تعداد عکس : {data[5]}\n"
     if data[7] != "":
         text +=f"متراژ زمین : {data[7]}\n"
