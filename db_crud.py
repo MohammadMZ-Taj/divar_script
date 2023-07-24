@@ -9,11 +9,11 @@ session = Session()
 Base.metadata.create_all(bind=engine)
 
 
-def read_data():
+def read_record():
     return session.query(Record).all()
 
 
-def save_data(token, title, top_description_text, middle_description_text, bottom_description_text, image_count,
+def save_record(token, title, top_description_text, middle_description_text, bottom_description_text, image_count,
               image_url, land_area, area, year_of_construction):
     try:
         record = Record(token, title, top_description_text, middle_description_text, bottom_description_text,

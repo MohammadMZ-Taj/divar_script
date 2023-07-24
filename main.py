@@ -5,6 +5,7 @@ import time
 import pandas as pd
 import os
 from bs4 import BeautifulSoup
+from db_crud import read_record, save_record
 
 with open('constants.json', 'r') as readconst:
     const = json.load(readconst)

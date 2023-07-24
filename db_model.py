@@ -5,6 +5,8 @@ Base = declarative_base()
 
 
 class Record(Base):
+    __tablename__ = 'Records'
+
     token = Column("token", String, unique=True, primary_key=True)
     title = Column("title", String)
     top_description_text = Column("top description text", String)
