@@ -1,4 +1,3 @@
-# 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
 from db_model import Record, Base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
