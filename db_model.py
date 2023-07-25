@@ -19,8 +19,9 @@ class Record(Base):
     year_of_construction = Column("year_of_construction", String)
     is_sent = Column("is sent", Boolean, default=False)
 
-    def __init__(self, token, title, top_description_text, middle_description_text, bottom_description_text, image_count,
-                 image_url, land_area, area, year_of_construction, is_sent):
+    def __init__(self, token, title, top_description_text, middle_description_text, bottom_description_text,
+                 image_count,
+                 image_url, land_area, area, year_of_construction):
         self.token = token
         self.title = title
         self.top_description_text = top_description_text
@@ -35,5 +36,3 @@ class Record(Base):
 
     def __repr__(self):
         return f"{self.title}-{self.year_of_construction} ({self.top_description_text})"
-
-

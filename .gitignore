@@ -2,4 +2,4 @@
 venv/
 *.csv
 *.db
-test.py
+__pycache__/
