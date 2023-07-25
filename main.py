@@ -1,11 +1,9 @@
 import requests
 import json
-import csv
 import time
-import pandas as pd
 import os
 from bs4 import BeautifulSoup
-from db_crud import read_record, save_record
+from db_crud import read_records, save_record, update_record
 
 with open('constants.json', 'r') as readconst:
     const = json.load(readconst)
@@ -91,9 +89,9 @@ def page_0_url():
 
 def get_more_info(token):
     print(f'getting additional info for {token}')
-    out = {'land area': '',
+    out = {'land_area': '',
            'area': '',
-           'Year of construction': ''}
+           'year_of_construction': ''}
     for _ in range(5):
         response = requests.get(const['page_url'] + token)
         if response.status_code == 200:
@@ -106,11 +104,11 @@ def get_more_info(token):
         if subitems[0].text == 'متراژ':
             out['area'] = subitems[1].text
         if subitems[0].text == 'ساخت':
-            out['Year of construction'] = subitems[1].text
+            out['year_of_construction'] = subitems[1].text
     info = soup.find_all('div', class_='kt-base-row kt-base-row--large kt-unexpandable-row')
     for item in info:
         if item.find("p", class_='kt-base-row__title kt-unexpandable-row__title').text == 'متراژ زمین':
-            out['land area'] = item.find("p", class_='kt-unexpandable-row__value').text
+            out['land_area'] = item.find("p", class_='kt-unexpandable-row__value').text
             break
     return out
 
@@ -157,40 +155,30 @@ def get_data():
 
 def save_data(list):
     print('saving data...')
-    with open(config['save_file'], "w") as csvfile:
-        writer = csv.writer(csvfile)
-        writer.writerow(list[0])
-        for item in list:
-            writer.writerow(item.values())
-
-
-def create_save_if_not_exist():
-    if not os.path.exists(config['save_file']):
-        with open(config['save_file'], 'w') as createsave:
-            createwriter = csv.writer(createsave)
-            createwriter.writerow(
-                ['token', 'title', 'top_description_text', 'middle_description_text', 'bottom_description_text',
-                 'image_count', 'image_url'])
-
+    for record in list:
+        save_record(*record, is_sent=False)
 
 def get_data_diffrence(data):
-    data1 = pd.DataFrame(data)
-    data2 = pd.read_csv(config['save_file'])
-    result1 = data1[~data1['token'].isin(data2['token'])]
-    return result1.values.tolist()
+    new_data = []
+    all_records_tokens = [record.token for record in read_records(get_all=True)]
+    for d in data:
+        # check if token (d first index) in stored records
+        if not d['token'] in all_records_tokens:
+            new_data.append(d)
+    return new_data
 
 
 def house_info(data):
-    text = f"**{data[1]}**\n\n{data[2]}\n{data[3]}\n{data[4]}\n"
-    if int(data[5]) > 0:
-        text += f"تعداد عکس : {data[5]}\n"
-    if data[7] != "":
-        text += f"متراژ زمین : {data[7]}\n"
-    if data[8] != "":
-        text += f"متراژ خانه : {data[8]}\n"
-    if data[9] != "":
-        text += f"سال ساخت : {data[9]}\n"
-    text += f"\n{const['page_url']}{data[0]}"
+    text = f"**{data['title']}**\n\n{data['top_description_text']}\n{data['middle_description_text']}\n{data['bottom_description_text']}\n"
+    if int(data['image_count']) > 0:
+        text += f"تعداد عکس : {data['image_count']}\n"
+    if data['land_area'] != "":
+        text += f"متراژ زمین : {data['land_area']}\n"
+    if data['area'] != "":
+        text += f"متراژ خانه : {data['area']}\n"
+    if data['year_of_construction'] != "":
+        text += f"سال ساخت : {data['year_of_construction']}\n"
+    text += f"\n{const['page_url']}{data['token']}"
     return text
 
 
@@ -225,26 +213,15 @@ def send_photo(chat_id, photo_url, caption):
     return False
 
 
-def save_not_sent(itemlist):
-    print('saving not sent messages')
-    if len(itemlist) > 0:
-        with open(config['not_sent_file'], "w") as csvfile:
-            writer = csv.writer(csvfile)
-            for item in itemlist:
-                writer.writerow(item)
-    else:
-        if os.path.exists(config['not_sent_file']):
-            os.remove(config['not_sent_file'])
-
-
 def notify_user(chat_id, row):
     global sent_messages
     if sent_messages % 20 == 0:
         print('waitng for 60sec befor sending more messages')
         time.sleep(60)
     sent_messages += 1
-    if int(row[5]) >= 1:
-        status = send_photo(chat_id, row[6], house_info(row))
+    print(row)
+    if int(row['image_count']) >= 1:
+        status = send_photo(chat_id, row['image_url'], house_info(row))
     else:
         status = send_message(chat_id, house_info(row))
     return status
@@ -257,32 +234,36 @@ def notify_all(chat_id, data):
         sent = notify_user(chat_id, row)
         if not sent:
             print(f"coudnt sent to user {chat_id} this message :{row}")
-            not_sent.append([chat_id] + row)
+            not_sent.append([chat_id, row])
 
     return not_sent
 
-
-def get_not_sent_data():
-    out = []
-    if os.path.exists(config['not_sent_file']):
-        with open(config['not_sent_file'], "r") as csvfile:
-            reader = csv.reader(csvfile)
-            for item in reader:
-                out.append(item)
-    return out
-
-
 def main():
-    not_sent_data = []
-    for item in get_not_sent_data():
-        if not notify_user(item[0], item[1:]):
-            not_sent_data.append(item)
+    # save old data which not sent
+    not_sent_data = read_records(sent_status=False)
+    # get new data from divar
     data = get_data()
-    create_save_if_not_exist()
+
     for chat_id in config['chat_ids']:
         not_sent_data += (notify_all(chat_id, get_data_diffrence(data)))
-    save_not_sent(not_sent_data)
-    save_data(data)
+
+    # get record tokens stored in db
+    record_tokens = [r.token for r in read_records(get_all=True)]
+
+    # iterate on all gotten data
+    for d in data:
+        if d['token'] in record_tokens: # if data already exits in db update its sent status to True
+            update_record(d['token'], sent_status=True)
+        else: # and if data doesn't exist, create a record for this data (assuming it is sent)
+            save_record(**d, is_sent=True)
+
+    # iterate on not sent data
+    for d in not_sent_data:
+        if d[1]['token'] in record_tokens:
+            # if it is already stored in db and now we understood it isn't sent, update its sent status to False
+            update_record(d[1]['token'], sent_status=False)
+        else: # else it isn't stored in db , store it with False status
+            save_record(**d[1], is_sent=False)
 
 
 if __name__ == '__main__':
