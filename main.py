@@ -272,8 +272,6 @@ def main():
     save_not_sent(not_sent_data)
     for d in data:
         save_record(**d)
-    if os.path.exists(config['not_sent_file']):
-        os.remove(config['not_sent_file'])
 
 
 if __name__ == '__main__':
