@@ -1,9 +1,9 @@
 import requests
 import json
-import csv
 import time
-import pandas as pd
 import os
+import csv
+import pandas as pd
 from bs4 import BeautifulSoup
 from db_crud import read_record, save_record
 
@@ -91,9 +91,9 @@ def page_0_url():
 
 def get_more_info(token):
     print(f'getting additional info for {token}')
-    out = {'land area': '',
+    out = {'land_area': '',
            'area': '',
-           'Year of construction': ''}
+           'year_of_construction': ''}
     for _ in range(5):
         response = requests.get(const['page_url'] + token)
         if response.status_code == 200:
@@ -106,11 +106,11 @@ def get_more_info(token):
         if subitems[0].text == 'متراژ':
             out['area'] = subitems[1].text
         if subitems[0].text == 'ساخت':
-            out['Year of construction'] = subitems[1].text
+            out['year_of_construction'] = subitems[1].text
     info = soup.find_all('div', class_='kt-base-row kt-base-row--large kt-unexpandable-row')
     for item in info:
         if item.find("p", class_='kt-base-row__title kt-unexpandable-row__title').text == 'متراژ زمین':
-            out['land area'] = item.find("p", class_='kt-unexpandable-row__value').text
+            out['land_area'] = item.find("p", class_='kt-unexpandable-row__value').text
             break
     return out
 
@@ -155,27 +155,16 @@ def get_data():
     return out
 
 
-def save_data(list):
-    print('saving data...')
-    with open(config['save_file'], "w") as csvfile:
-        writer = csv.writer(csvfile)
-        writer.writerow(list[0])
-        for item in list:
-            writer.writerow(item.values())
-
-
-def create_save_if_not_exist():
-    if not os.path.exists(config['save_file']):
-        with open(config['save_file'], 'w') as createsave:
-            createwriter = csv.writer(createsave)
-            createwriter.writerow(
-                ['token', 'title', 'top_description_text', 'middle_description_text', 'bottom_description_text',
-                 'image_count', 'image_url'])
-
-
 def get_data_diffrence(data):
     data1 = pd.DataFrame(data)
-    data2 = pd.read_csv(config['save_file'])
+    d = read_record()
+    for i in range(len(d)):
+        d[i] = [d[i].token, d[i].title, d[i].top_description_text, d[i].middle_description_text,
+                d[i].bottom_description_text, d[i].image_count,
+                d[i].image_url, d[i].land_area, d[i].area, d[i].year_of_construction]
+    data2 = pd.DataFrame(d, columns=['token', 'title', 'top_description_text', 'middle_description_text',
+                                     'bottom_description_text', 'image_count',
+                                     'image_url', 'land_area', 'area', 'year_of_construction'])
     result1 = data1[~data1['token'].isin(data2['token'])]
     return result1.values.tolist()
 
@@ -278,11 +267,13 @@ def main():
         if not notify_user(item[0], item[1:]):
             not_sent_data.append(item)
     data = get_data()
-    create_save_if_not_exist()
     for chat_id in config['chat_ids']:
         not_sent_data += (notify_all(chat_id, get_data_diffrence(data)))
     save_not_sent(not_sent_data)
-    save_data(data)
+    for d in data:
+        save_record(**d)
+    if os.path.exists(config['not_sent_file']):
+        os.remove(config['not_sent_file'])
 
 
 if __name__ == '__main__':

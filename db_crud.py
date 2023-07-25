@@ -14,7 +14,7 @@ def read_record():
 
 
 def save_record(token, title, top_description_text, middle_description_text, bottom_description_text, image_count,
-              image_url, land_area, area, year_of_construction):
+                image_url, land_area, area, year_of_construction):
     try:
         record = Record(token, title, top_description_text, middle_description_text, bottom_description_text,
                         image_count,

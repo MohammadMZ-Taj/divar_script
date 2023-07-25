@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Integer, Boolean
+from sqlalchemy import Column, String, Integer
 from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
@@ -17,10 +17,10 @@ class Record(Base):
     land_area = Column("land area", String)
     area = Column("area", String)
     year_of_construction = Column("year_of_construction", String)
-    is_sent = Column("is sent", Boolean, default=False)
 
-    def __init__(self, token, title, top_description_text, middle_description_text, bottom_description_text, image_count,
-                 image_url, land_area, area, year_of_construction, is_sent):
+    def __init__(self, token, title, top_description_text, middle_description_text, bottom_description_text,
+                 image_count,
+                 image_url, land_area, area, year_of_construction):
         self.token = token
         self.title = title
         self.top_description_text = top_description_text
@@ -31,9 +31,6 @@ class Record(Base):
         self.land_area = land_area
         self.area = area
         self.year_of_construction = year_of_construction
-        self.is_sent = is_sent
 
     def __repr__(self):
         return f"{self.title}-{self.year_of_construction} ({self.top_description_text})"
-
-
