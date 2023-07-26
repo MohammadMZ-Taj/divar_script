@@ -3,4 +3,5 @@ venv/
 *.csv
 *.db
 __pycache__/
+*.pyc
 test.py
