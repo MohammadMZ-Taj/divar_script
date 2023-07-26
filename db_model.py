@@ -21,7 +21,7 @@ class Record(Base):
 
     def __init__(self, token, title, top_description_text, middle_description_text, bottom_description_text,
                  image_count,
-                 image_url, land_area, area, year_of_construction):
+                 image_url, land_area, area, year_of_construction, is_sent):
         self.token = token
         self.title = title
         self.top_description_text = top_description_text
