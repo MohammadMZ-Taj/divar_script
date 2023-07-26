@@ -1,11 +1,7 @@
 from db_model import Record, Base
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from engine_session import get_session
 
-engine = create_engine("sqlite:///mydb.db", echo=True)
-Session = sessionmaker(bind=engine)
-session = Session()
-
+engine, session = get_session()
 Base.metadata.create_all(bind=engine)
 
 
@@ -30,5 +26,6 @@ def save_record(token, title, top_description_text, middle_description_text, bot
         session.add(record)
         session.commit()
         return True
-    except:
+    except Exception as e:
+        print(e)
         return False

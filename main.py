@@ -1,7 +1,6 @@
 import requests
 import json
 import time
-import os
 from bs4 import BeautifulSoup
 from db_crud import read_records, save_record, update_record
 
@@ -255,7 +254,7 @@ def main():
     # iterate on all gotten data
     for d in data:
         if d['token'] in record_tokens:  # if data already exits in db update its sent status to True
-            update_record(d['token'], sent_status=True)
+            update_record(d['token'], new_state=True)
         else:  # and if data doesn't exist, create a record for this data (assuming it is sent)
             save_record(**d, is_sent=True)
 
@@ -263,7 +262,7 @@ def main():
     for d in not_sent_data:
         if d[1]['token'] in record_tokens:
             # if it is already stored in db and now we understood it isn't sent, update its sent status to False
-            update_record(d[1]['token'], sent_status=False)
+            update_record(d[1]['token'], new_state=False)
         else:  # else it isn't stored in db , store it with False status
             save_record(**d[1], is_sent=False)
 
