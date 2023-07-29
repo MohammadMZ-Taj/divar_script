@@ -7,6 +7,7 @@ from db_crud import read_records, save_record, update_record
 
 with open('constants.json', 'r') as read_const:
     CONST = json.load(read_const)
+
 with open('config.json', 'r', encoding='utf-8') as read_config:
     CONFIG = json.load(read_config)
 
@@ -82,7 +83,8 @@ def page_0_url():
     out = ""
 
     if CONFIG['house_config']['credit']['max'] != 0 or CONFIG['house_config']['credit']['min'] != 0:
-        out += f"credit={get_string_range(CONFIG['house_config']['credit']['min'], CONFIG['house_config']['credit']['max'])}&"
+        out += f"credit=" \
+               f"{get_string_range(CONFIG['house_config']['credit']['min'], CONFIG['house_config']['credit']['max'])}&"
 
     if CONFIG['house_config']['rent']['max'] != 0 or CONFIG['house_config']['rent']['min'] != 0:
         out += f"rent={get_string_range(CONFIG['house_config']['rent']['min'], CONFIG['house_config']['rent']['max'])}&"
@@ -106,23 +108,24 @@ def get_more_house_info(token):
         'land_area': '',
         'area': '',
         'year_of_construction': '',
-        }
+    }
 
-    for _ in range(5):
-        response = requests.get(CONST['page_url'] + token)
+    response = requests.get(CONST['page_url'] + token)
+    for i in range(1, 5):
         if response.status_code == 200:
             break
-        time.sleep(1)
+        time.sleep(i)
+        response = requests.get(CONST['page_url'] + token)
 
     soup = BeautifulSoup(response.content, "html.parser")
     top_info = soup.find_all('div', class_='kt-group-row-item kt-group-row-item--info-row')
 
     for item in top_info:
-        subitems = item.find_all('span')
-        if subitems[0].text == 'متراژ':
-            out['area'] = subitems[1].text
-        if subitems[0].text == 'ساخت':
-            out['year_of_construction'] = subitems[1].text
+        sub_items = item.find_all('span')
+        if sub_items[0].text == 'متراژ':
+            out['area'] = sub_items[1].text
+        if sub_items[0].text == 'ساخت':
+            out['year_of_construction'] = sub_items[1].text
 
     info = soup.find_all('div', class_='kt-base-row kt-base-row--large kt-unexpandable-row')
 
@@ -209,7 +212,8 @@ def get_data_difference(received_data):
 
 
 def get_house_info_string(house_info):
-    text = f"**{house_info['title']}**\n\n{house_info['top_description_text']}\n{house_info['middle_description_text']}\n{house_info['bottom_description_text']}\n"
+    text = f"**{house_info['title']}**\n\n{house_info['top_description_text']}\n" \
+           f"{house_info['middle_description_text']}\n{house_info['bottom_description_text']}\n"
 
     if int(house_info['image_count']) > 0:
         text += f"تعداد عکس : {house_info['image_count']}\n"
@@ -323,7 +327,7 @@ def main():
     # iterate on not sent data
     for d in not_sent_data:
         if d[1]['token'] in record_tokens:
-            # if it is already stored in db and now we understood it isn't sent, update its sent status to False
+            # if it is already stored in db, and now we understood it isn't sent, update its sent status to False
             update_record(d[1]['token'], new_state=False)
         else:  # else it isn't stored in db , store it with False status
             save_record(**d[1], is_sent=False)
