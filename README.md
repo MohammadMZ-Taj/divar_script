@@ -1,5 +1,7 @@
 # divar_tel_bot
-you to install requests  , json , csv , pandas for this to work
+a simple divar (divar.ir) script which collects house information and sends to telegram (using python, sqlalchemy, postgresql and telegram apis)
+# requirements
+install requirements from requirements.txt. you also need to create a python file named local_settings.py which contains a dictionary of database configurations (user, password, host, port and db)
 # config
 in config.json
 set your bale bot api you got from @botfather
@@ -7,7 +9,7 @@ set your bale bot api you got from @botfather
 you can get the chat id you want the bot to send message to when you go to web.bale.ai
 for example this chat is the main one https://web.bale.ai/chat/6425583673
 and the id is 6425583673
-add a , between each chat id
+add "a" between each chat id
 # save file
 set a save_file address with .csv
 # not sent file
