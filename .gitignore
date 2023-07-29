@@ -2,6 +2,6 @@
 venv/
 *.csv
 *.db
-__pycache__/*.cpython-310.pyc
+__pycache__/
 test.py
 local_settings.py
