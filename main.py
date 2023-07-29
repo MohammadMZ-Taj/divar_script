@@ -1,33 +1,41 @@
-import requests
 import json
+import requests
 import time
 from bs4 import BeautifulSoup
+
 from db_crud import read_records, save_record, update_record
 
-with open('constants.json', 'r') as readconst:
-    const = json.load(readconst)
-with open('config.json', 'r', encoding='utf-8') as readconfig:
-    config = json.load(readconfig)
+with open('constants.json', 'r') as read_const:
+    CONST = json.load(read_const)
+with open('config.json', 'r', encoding='utf-8') as read_config:
+    CONFIG = json.load(read_config)
 
-sent_messages = 1
+SEND_MESSAGES_COUNTER = 1
 
 
 def get_district_code():
     out = []
-    for district in config['houseconfig']['districts']:
-        if district in const['district_codes']:
-            out.append(const['district_codes'][district])
+    for district in CONFIG['house_config']['districts']:
+        if district in CONST['district_codes']:
+            out.append(CONST['district_codes'][district])
         else:
             print(district + ' was not found')
             raise ValueError
     return out
 
 
-def min_max_value(min, max):
-    if max > min:
-        return {"max": max, "min": min}
+def get_dict_range(min_value, max_value):
+    if max_value > min_value:
+        return {"max": max_value, "min": min_value}
     else:
-        return {"min": min}
+        return {"min": min_value}
+
+
+def get_string_range(min_value, max_value):
+    if max_value > min_value:
+        return f"{min_value}-{max_value}"
+    else:
+        return f"{min_value}-"
 
 
 def payload_json_schema():
@@ -35,205 +43,259 @@ def payload_json_schema():
            "sort": {"value": "sort_date"},
            "cities": ["6"]}
 
-    if config['houseconfig']['districts']:
+    if CONFIG['house_config']['districts']:
         out['districts'] = {"vacancies": get_district_code()}
-    if config['houseconfig']['credit']['max'] != 0 or config['houseconfig']['credit']['min'] != 0:
-        out['credit'] = min_max_value(config['houseconfig']['credit']['min'], config['houseconfig']['credit']['max'])
-    if config['houseconfig']['rent']['max'] != 0 or config['houseconfig']['rent']['min'] != 0:
-        out['rent'] = min_max_value(config['houseconfig']['rent']['min'], config['houseconfig']['rent']['max'])
-    if config['houseconfig']['size']['max'] != 0 or config['houseconfig']['size']['min'] != 0:
-        out['size'] = min_max_value(config['houseconfig']['size']['min'], config['houseconfig']['size']['max'])
-    if config['houseconfig']['rooms'] != "":
-        out['rooms'] = {'value': config['houseconfig']['rooms']}
+
+    if CONFIG['house_config']['credit']['max'] != 0 or CONFIG['house_config']['credit']['min'] != 0:
+        out['credit'] = get_dict_range(CONFIG['house_config']['credit']['min'], CONFIG['house_config']['credit']['max'])
+
+    if CONFIG['house_config']['rent']['max'] != 0 or CONFIG['house_config']['rent']['min'] != 0:
+        out['rent'] = get_dict_range(CONFIG['house_config']['rent']['min'], CONFIG['house_config']['rent']['max'])
+
+    if CONFIG['house_config']['size']['max'] != 0 or CONFIG['house_config']['size']['min'] != 0:
+        out['size'] = get_dict_range(CONFIG['house_config']['size']['min'], CONFIG['house_config']['size']['max'])
+
+    if CONFIG['house_config']['rooms'] != "":
+        out['rooms'] = {'value': CONFIG['house_config']['rooms']}
 
     return out
 
 
-def min_max_value_string(min, max):
-    if max > min:
-        return f"{min}-{max}"
-    else:
-        return f"{min}-"
-
-
-def rooms_to_eng(string):
-    if string == 'بدون اتاق':
-        return 'noroom'
-    elif string == 'یک':
+def get_room_numbers(persian_room_numbers):
+    if persian_room_numbers == 'بدون اتاق':
+        return '0'
+    elif persian_room_numbers == 'یک':
         return '1'
-    elif string == 'دو':
+    elif persian_room_numbers == 'دو':
         return '2'
-    elif string == 'سه':
+    elif persian_room_numbers == 'سه':
         return '3'
-    elif string == 'چهار':
+    elif persian_room_numbers == 'چهار':
         return '4'
-    elif string == 'بیشتر':
+    elif persian_room_numbers == 'بیشتر':
         return 'more'
+    else:
+        return False
 
 
 def page_0_url():
     out = ""
-    if config['houseconfig']['credit']['max'] != 0 or config['houseconfig']['credit']['min'] != 0:
-        out += f"credit={min_max_value_string(config['houseconfig']['credit']['min'], config['houseconfig']['credit']['max'])}&"
-    if config['houseconfig']['rent']['max'] != 0 or config['houseconfig']['rent']['min'] != 0:
-        out += f"rent={min_max_value_string(config['houseconfig']['rent']['min'], config['houseconfig']['rent']['max'])}&"
-    if config['houseconfig']['size']['max'] != 0 or config['houseconfig']['size']['min'] != 0:
-        out += f"size={min_max_value_string(config['houseconfig']['size']['min'], config['houseconfig']['size']['max'])}&"
-    if config['houseconfig']['rooms'] != "":
-        out += f"rooms={rooms_to_eng(config['houseconfig']['rooms'])}&"
+
+    if CONFIG['house_config']['credit']['max'] != 0 or CONFIG['house_config']['credit']['min'] != 0:
+        out += f"credit={get_string_range(CONFIG['house_config']['credit']['min'], CONFIG['house_config']['credit']['max'])}&"
+
+    if CONFIG['house_config']['rent']['max'] != 0 or CONFIG['house_config']['rent']['min'] != 0:
+        out += f"rent={get_string_range(CONFIG['house_config']['rent']['min'], CONFIG['house_config']['rent']['max'])}&"
+
+    if CONFIG['house_config']['size']['max'] != 0 or CONFIG['house_config']['size']['min'] != 0:
+        out += f"size={get_string_range(CONFIG['house_config']['size']['min'], CONFIG['house_config']['size']['max'])}&"
+
+    if CONFIG['house_config']['rooms'] != "":
+        out += f"rooms={get_room_numbers(CONFIG['house_config']['rooms'])}&"
+
     if out != "" and out[-1] == '&':
         return out[:-1]
+
     return out
 
 
-def get_more_info(token):
+def get_more_house_info(token):
     print(f'getting additional info for {token}')
-    out = {'land_area': '',
-           'area': '',
-           'year_of_construction': ''}
+
+    out = {
+        'land_area': '',
+        'area': '',
+        'year_of_construction': '',
+        }
+
     for _ in range(5):
-        response = requests.get(const['page_url'] + token)
+        response = requests.get(CONST['page_url'] + token)
         if response.status_code == 200:
             break
         time.sleep(1)
+
     soup = BeautifulSoup(response.content, "html.parser")
     top_info = soup.find_all('div', class_='kt-group-row-item kt-group-row-item--info-row')
+
     for item in top_info:
         subitems = item.find_all('span')
         if subitems[0].text == 'متراژ':
             out['area'] = subitems[1].text
         if subitems[0].text == 'ساخت':
             out['year_of_construction'] = subitems[1].text
+
     info = soup.find_all('div', class_='kt-base-row kt-base-row--large kt-unexpandable-row')
+
     for item in info:
         if item.find("p", class_='kt-base-row__title kt-unexpandable-row__title').text == 'متراژ زمین':
             out['land_area'] = item.find("p", class_='kt-unexpandable-row__value').text
             break
+
     return out
 
 
 def get_data():
-    print('getting data from divar')
     out = []
     last_post_date = 0
     index = 0
+
+    print('getting data from divar')
+
     while True:
-        print('getting page : ', index)
+        print(f'reading page: {index}')
+
         if index > 0:
-            payload = {"page": index,
-                       "json_schema": payload_json_schema()}
+            payload = {"page": index, "json_schema": payload_json_schema()}
+
             if last_post_date != 0:
                 payload['last-post-date'] = last_post_date
+
             json_payload = json.dumps(payload)
             header = {"Content-Type": "application/json"}
-            response = requests.post(const['api_url'], data=json_payload, headers=header)
+            response = requests.post(CONST['api_url'], data=json_payload, headers=header)
+
         else:
-            response = requests.get(const['api_url_page0'] + page_0_url())
+            response = requests.get(CONST['api_url_page0'] + page_0_url())
+
         page = response.json()
         last_post_date = page['last_post_date']
-        postlist = page['web_widgets']['post_list']
-        if not postlist:
+        post_list = page['web_widgets']['post_list']
+
+        if not post_list:
             break
-        for item in postlist:
-            if item['widget_type'] != 'POST_ROW':
+
+        for post in post_list:
+            if post['widget_type'] != 'POST_ROW':
                 continue
-            data = {x: item['data'][x] for x in
+
+            data = {x: post['data'][x] for x in
                     ['token', 'title', 'top_description_text', 'middle_description_text', 'bottom_description_text',
                      'image_count']}
-            if item['data']['image_count'] > 0:
-                data['image_url'] = item['data']['image_url'][1]['src']
+
+            if post['data']['image_count'] > 0:
+                data['image_url'] = post['data']['image_url'][1]['src']
+
             else:
                 # placeholder for image url cuz it was a list
                 data['image_url'] = ""
-            data.update(get_more_info(data['token']))
+
+            data.update(get_more_house_info(data['token']))
             out.append(data)
+
         index += 1
-    print(f'found {len(out)} items')
+
+    print(f'found {len(out)} posts')
+
     return out
 
 
-def save_data(list):
+def save_data(data):
     print('saving data...')
-    for record in list:
+
+    for record in data:
         save_record(*record, is_sent=False)
 
 
-def get_data_diffrence(data):
+def get_data_difference(received_data):
     new_data = []
     all_records_tokens = [record.token for record in read_records(get_all=True)]
-    for d in data:
+
+    for d in received_data:
         # check if token (d first index) in stored records
         if not d['token'] in all_records_tokens:
             new_data.append(d)
+
     return new_data
 
 
-def house_info(data):
-    text = f"**{data['title']}**\n\n{data['top_description_text']}\n{data['middle_description_text']}\n{data['bottom_description_text']}\n"
-    if int(data['image_count']) > 0:
-        text += f"تعداد عکس : {data['image_count']}\n"
-    if data['land_area'] != "":
-        text += f"متراژ زمین : {data['land_area']}\n"
-    if data['area'] != "":
-        text += f"متراژ خانه : {data['area']}\n"
-    if data['year_of_construction'] != "":
-        text += f"سال ساخت : {data['year_of_construction']}\n"
-    text += f"\n{const['page_url']}{data['token']}"
+def get_house_info_string(house_info):
+    text = f"**{house_info['title']}**\n\n{house_info['top_description_text']}\n{house_info['middle_description_text']}\n{house_info['bottom_description_text']}\n"
+
+    if int(house_info['image_count']) > 0:
+        text += f"تعداد عکس : {house_info['image_count']}\n"
+
+    if house_info['land_area'] != "":
+        text += f"متراژ زمین : {house_info['land_area']}\n"
+
+    if house_info['area'] != "":
+        text += f"متراژ خانه : {house_info['area']}\n"
+
+    if house_info['year_of_construction'] != "":
+        text += f"سال ساخت : {house_info['year_of_construction']}\n"
+
+    text += f"\n{CONST['page_url']}{house_info['token']}"
+
     return text
 
 
 def send_message(chat_id, text):
     for i in range(5):
-        url = f"https://api.telegram.org/bot{config['bot_api_key']}/sendMessage"
+        url = f"https://api.telegram.org/bot{CONFIG['bot_api_key']}/sendMessage"
         payload = {"chat_id": chat_id, "text": text}
         json_payload = json.dumps(payload)
         header = {"Content-Type": "application/json"}
+
         try:
-            response = requests.post(url, data=json_payload, headers=header, proxies=config['proxies'])
+            response = requests.post(url, data=json_payload, headers=header, proxies=CONFIG['proxies'])
+
             if response.status_code == 200:
                 return True
-        except Exception:
-            pass
+
+        except Exception as e:
+            print("--- ERROR at send message---")
+            print(e)
+
     return False
 
 
 def send_photo(chat_id, photo_url, caption):
     for i in range(5):
-        url = f"https://api.telegram.org/bot{config['bot_api_key']}/sendPhoto"
+        url = f"https://api.telegram.org/bot{CONFIG['bot_api_key']}/sendPhoto"
         payload = {"chat_id": chat_id, "photo": photo_url, "caption": caption}
         json_payload = json.dumps(payload)
         header = {"Content-Type": "application/json"}
+
         try:
-            response = requests.post(url, data=json_payload, headers=header, proxies=config['proxies'])
+            response = requests.post(url, data=json_payload, headers=header, proxies=CONFIG['proxies'])
+
             if response.status_code == 200:
                 return True
-        except Exception:
-            pass
+
+        except Exception as e:
+            print("--- ERROR at send photo ---")
+            print(e)
 
     return False
 
 
 def notify_user(chat_id, row):
-    global sent_messages
-    if sent_messages % 20 == 0:
-        print('waitng for 60sec befor sending more messages')
+    global SEND_MESSAGES_COUNTER
+
+    if SEND_MESSAGES_COUNTER % 20 == 0:
+        print('waiting for 60sec before sending more messages')
         time.sleep(60)
-    sent_messages += 1
+
+    SEND_MESSAGES_COUNTER += 1
+
     print(row)
+
     if int(row['image_count']) >= 1:
-        status = send_photo(chat_id, row['image_url'], house_info(row))
+        status = send_photo(chat_id, row['image_url'], get_house_info_string(row))
+
     else:
-        status = send_message(chat_id, house_info(row))
+        status = send_message(chat_id, get_house_info_string(row))
+
     return status
 
 
 def notify_all(chat_id, data):
     print(f'sending {len(data)} items to user {chat_id}')
     not_sent = []
+
     for row in data:
         sent = notify_user(chat_id, row)
         if not sent:
-            print(f"coudnt sent to user {chat_id} this message :{row}")
+            print(f"couldn't sent to user {chat_id} this message :{row}")
             not_sent.append([chat_id, row])
 
     return not_sent
@@ -245,8 +307,8 @@ def main():
     # get new data from divar
     data = get_data()
 
-    for chat_id in config['chat_ids']:
-        not_sent_data += (notify_all(chat_id, get_data_diffrence(data)))
+    for chat_id in CONFIG['chat_ids']:
+        not_sent_data += (notify_all(chat_id, get_data_difference(data)))
 
     # get record tokens stored in db
     record_tokens = [r.token for r in read_records(get_all=True)]

@@ -1,12 +1,10 @@
 {
     "bot_api_key" : "insert your bale bot api here",
-    "save_file" : "data.csv",
-    "not_sent_file" : "not_sent.csv",
     "proxies" : {
         "http": "socks5h://127.0.0.1:9999",
         "https": "socks5h://127.0.0.1:9999"
     },
-    "houseconfig" :{
+    "house_config" :{
         "districts" : [],
         "credit" : {
             "min" : 500000000,
