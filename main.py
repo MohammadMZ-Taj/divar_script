@@ -333,7 +333,7 @@ def main():
                     update_record(d[1]['token'], new_state=False)
             except Exception:
                 if d.token in record_tokens:
-                    save_record(d.token, is_sent=False)
+                    update_record(d.token, new_state=False)
 
 
 if __name__ == '__main__':
