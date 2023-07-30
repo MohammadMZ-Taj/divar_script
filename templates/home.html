@@ -18,9 +18,11 @@
 
                 <p>Credit range from :</p>
                 <div class="input-group mb-3">
-                    <input type="number" class="form-control" placeholder="Minimum" name="credit_min" value="500000000" required>
+                    <input type="number" class="form-control" placeholder="Minimum" name="credit_min" value="500000000"
+                           required>
                     <span class="input-group-text">to</span>
-                    <input type="number" class="form-control" placeholder="Maximum" name="credit_max" value="2000000000" required>
+                    <input type="number" class="form-control" placeholder="Maximum" name="credit_max" value="2000000000"
+                           required>
                 </div>
             </div>
 
@@ -28,9 +30,11 @@
 
                 <p>Rent range from :</p>
                 <div class="input-group mb-3">
-                    <input type="number" class="form-control" placeholder="Minimum" name="rent_min" value="1000000" required>
+                    <input type="number" class="form-control" placeholder="Minimum" name="rent_min" value="1000000"
+                           required>
                     <span class="input-group-text">to</span>
-                    <input type="number" class="form-control" placeholder="Maximum" name="rent_max" value="80000000" required>
+                    <input type="number" class="form-control" placeholder="Maximum" name="rent_max" value="80000000"
+                           required>
                 </div>
             </div>
 
@@ -39,7 +43,8 @@
 
                 <p>Size range from :</p>
                 <div class="input-group mb-3">
-                    <input type="number" class="form-control" placeholder="Minimum" name="size_min" value="200" required>
+                    <input type="number" class="form-control" placeholder="Minimum" name="size_min" value="200"
+                           required>
                     <span class="input-group-text">to</span>
                     <input type="number" class="form-control" placeholder="Maximum" name="size_max" required>
                 </div>
@@ -49,24 +54,40 @@
 
                 <p>Room count :</p>
 
-                <select class="form-select" aria-label="room_count">
+                <select class="form-select" name="rooms">
                     <option value="0">0 (No room!)</option>
                     <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3">3</option>
                     <option value="4">4</option>
-                    <option value="more" selected >more (>4)</option>
+                    <option value="more" selected>more (>4)</option>
                 </select>
 
             </div>
 
         </div>
-    <div class="row">
-        <button class="btn btn-primary">
-            submit
-        </button>
-    </div>
+        <div class="row">
+            <button class="btn btn-primary">
+                search
+            </button>
+        </div>
     </form>
+
+
+    <a href="#" class="btn btn-primary" style="text-decoration: none; color: black; border: none;">
+        <div class="card">
+            <div class="card-header">
+                Featured
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">Special title treatment</h5>
+                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+
+            </div>
+        </div>
+    </a>
+
+
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
