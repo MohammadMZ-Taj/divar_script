@@ -203,13 +203,13 @@ def save_data(data):
         save_record(*record, is_sent=False)
 
 
-def get_data_difference(received_data):
+def get_new_data(received_data):
     new_data = []
     all_records_tokens = [record.token for record in read_records(get_all=True)]
 
     for d in received_data:
         # check if token (d first index) in stored records
-        if not d['token'] in all_records_tokens:
+        if d['token'] not in all_records_tokens:
             new_data.append(d)
 
     return new_data
@@ -315,26 +315,29 @@ def main():
     # get new data from divar
     data = get_data()
 
+    new_data = get_new_data(data)
     for chat_id in CONFIG['chat_ids']:
-        not_sent_data += (notify_all(chat_id, get_data_difference(data)))
+        not_sent_data += notify_all(chat_id, new_data)  # returns [chat_id, {}]
 
     # get record tokens stored in db
     record_tokens = [r.token for r in read_records(get_all=True)]
 
     # iterate on all gotten data
     for d in data:
-        if d['token'] in record_tokens:  # if data already exits in db update its sent status to True
-            update_record(d['token'], new_state=True)
-        else:  # and if data doesn't exist, create a record for this data (assuming it is sent)
+        # if data doesn't already exist in db create a record for this data (assuming it is sent)
+        if d['token'] not in record_tokens:
             save_record(**d, is_sent=True)
+            record_tokens.append(d['token'])
 
     # iterate on not sent data
-    for d in not_sent_data:
-        if d[1]['token'] in record_tokens:
-            # if it is already stored in db, and now we understood it isn't sent, update its sent status to False
-            update_record(d[1]['token'], new_state=False)
-        else:  # else it isn't stored in db , store it with False status
-            save_record(**d[1], is_sent=False)
+    if not_sent_data:
+        for d in not_sent_data:
+            try:
+                if d[1]['token'] in record_tokens:  # which added in line 316
+                    update_record(d[1]['token'], new_state=False)
+            except Exception:
+                if d.token in record_tokens:
+                    save_record(d.token, is_sent=False)
 
 
 # if __name__ == '__main__':
