@@ -8,9 +8,13 @@ from db_crud import read_records, save_record, update_record
 with open('constants.json', 'r') as read_const:
     CONST = json.load(read_const)
 
-with open('config.json', 'r', encoding='utf-8') as read_config:
-    CONFIG = json.load(read_config)
 
+def get_configs():
+    with open('config.json', 'r', encoding='utf-8') as read_config:
+        return json.load(read_config)
+
+
+CONFIG = {}
 SEND_MESSAGES_COUNTER = 1
 
 
@@ -333,5 +337,5 @@ def main():
             save_record(**d[1], is_sent=False)
 
 
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     main()
