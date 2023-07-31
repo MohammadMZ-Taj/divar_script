@@ -278,7 +278,7 @@ def notify_user(chat_id, row):
     global SEND_MESSAGES_COUNTER
 
     if SEND_MESSAGES_COUNTER % 20 == 0:
-        print('waiting for 60sec before sending more messages')
+        print('waiting for 10sec before sending more messages')
         time.sleep(10)
 
     SEND_MESSAGES_COUNTER += 1
@@ -301,7 +301,7 @@ def notify_all(chat_id, data):
     for row in data:
         sent = notify_user(chat_id, row)
         if not sent:
-            print(f"couldn't sen to user {chat_id} this message :{row}")
+            print(f"couldn't send to user {chat_id} this message :{row}")
             not_sent.append([chat_id, row])
 
     return not_sent
@@ -309,7 +309,7 @@ def notify_all(chat_id, data):
 
 def main():
     # save old data which not sent
-    not_sent_data = read_records(sent_status=False)
+    not_sent_data = read_records(send_status=False)
     # get new data from divar
     data = get_data()
 
