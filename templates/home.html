@@ -93,8 +93,8 @@
             </button>
         </div>
     </form>
-    <div class="row">
-        {% if records %}
+    {% if records %}
+        <div class="row">
             <p>{{ record_count }} result(s) found.</p>
             {% for record in records %}
                 <div class="col-6">
@@ -121,17 +121,19 @@
                                             <img class="box-shadow my-auto" style="width: 18em; height: 14em;"
                                                  src="{{ record.image_url }}" alt="image">
                                         {% else %}
-                                            <img src="img/House-Suburban.jpg" class="box-shadow my-auto" style="width: 18em; height: 14em;"
+                                            <img src="img/House-Suburban.jpg" class="box-shadow my-auto"
+                                                 style="width: 18em; height: 14em;"
                                                  alt="image">
                                         {% endif %}
                                     </div>
                                 </div>
                             </div>
+                        </div>
                     </a>
                 </div>
             {% endfor %}
-        {% endif %}
-    </div>
+        </div>
+    {% endif %}
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"

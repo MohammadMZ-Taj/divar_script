@@ -16,9 +16,11 @@ def home():
         CONFIG['house_config']['rooms'] = request.form['rooms']
         CONFIG['house_config']['size']['max'] = int(request.form['size_max'])
         CONFIG['house_config']['size']['min'] = int(request.form['size_min'])
-        return render_template('home.html', records=main())
+        records = main()
+        return render_template('home.html', records=records, record_count=len(records))
     else:
-        return render_template('home.html', records=read_records(get_all=True))
+        records = read_records(get_all=True)
+        return render_template('home.html', records=records, record_count=len(records))
 
 
 if __name__ == "__main__":
