@@ -66,7 +66,7 @@
             </div>
 
         </div>
-        <div class="row">
+        <div class="row my-2">
             <button class="btn btn-primary">
                 search
             </button>
@@ -74,19 +74,36 @@
     </form>
 
     <div class="row">
-
         {% if records %}
             {% for record in records %}
-                <a href="" class="btn btn-primary" style="text-decoration: none; color: black; border:none;">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">Special title treatment</h5>
-                            <p class="card-text">With supporting text below as a natural lead-in to additional
-                                content.</p>
+                <div class="col-4 m-2">
+                    <a href="https://divar.ir/v/{{ record.token }}/" class="btn btn-primary" target="_blank"
+                       style="text-decoration: none; color:  black;border:none; background-color: white;">
+                        <div class="card shadow border-0">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col">
 
+                                        <h4>Title: {{ record.title }}</h4>
+                                        <h5>price: {{ record.price }}</h5>
+                                        <p>{{ record.land_area }}</p>
+                                        <p>{{ record.area }}</p>
+                                        <h6>Descreptions:</h6>
+                                        <p>{{ record.top_description_text }}</p>
+                                        <p>{{ record.middle_description_text }}</p>
+                                        <p>{{ record.bottom_description_text }}</p>
+                                    </div>
+                                    {% if record.image_url %}
+                                    <div class="col">
+                                        <img src="{{ record.image_url }}" alt="image">
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </a>
+                    </a>
+                </div>
             {% endfor %}
         {% endif %}
     </div>

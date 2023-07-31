@@ -16,3 +16,5 @@ SQLAlchemy-Utils==0.41.1
 typing_extensions==4.7.1
 tzdata==2023.3
 urllib3==2.0.4
+
+Flask~=2.3.2

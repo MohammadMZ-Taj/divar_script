@@ -8,8 +8,10 @@ from db_crud import read_records, save_record, update_record
 with open('constants.json', 'r') as read_const:
     CONST = json.load(read_const)
 
+
 with open('config.json', 'r', encoding='utf-8') as read_config:
     CONFIG = json.load(read_config)
+
 
 SEND_MESSAGES_COUNTER = 1
 
@@ -312,6 +314,7 @@ def main():
     data = get_data()
 
     new_data = get_new_data(data)
+
     for chat_id in CONFIG['chat_ids']:
         not_sent_data += notify_all(chat_id, new_data)  # returns [chat_id, {}]
 
@@ -334,7 +337,8 @@ def main():
             except Exception:
                 if d.token in record_tokens:
                     update_record(d.token, new_state=False)
+    return new_data
 
 
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     main()
