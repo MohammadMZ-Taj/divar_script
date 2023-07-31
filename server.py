@@ -1,5 +1,5 @@
 from flask import Flask, request, render_template
-from main import CONFIG, main
+from main import CONFIG, start_app
 
 app = Flask(__name__)
 
@@ -14,7 +14,7 @@ def home():
         CONFIG['house_config']['rooms'] = request.form['rooms']
         CONFIG['house_config']['size']['max'] = int(request.form['size_max'])
         CONFIG['house_config']['size']['min'] = int(request.form['size_min'])
-        records = main()
+        records = start_app()
         return render_template('home.html', records=records, record_count=len(records), latest_config=CONFIG['house_config'])
     else:
 

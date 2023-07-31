@@ -81,32 +81,32 @@ def get_room_numbers(persian_room_numbers):
         return False
 
 
-def page_0_url():
-    out = ""
+def get_page_0_url():
+    url = ""
 
     if CONFIG['house_config']['credit']['max'] != 0 or CONFIG['house_config']['credit']['min'] != 0:
-        out += f"credit=" \
+        url += f"credit=" \
                f"{get_string_range(CONFIG['house_config']['credit']['min'], CONFIG['house_config']['credit']['max'])}&"
 
     if CONFIG['house_config']['rent']['max'] != 0 or CONFIG['house_config']['rent']['min'] != 0:
-        out += f"rent={get_string_range(CONFIG['house_config']['rent']['min'], CONFIG['house_config']['rent']['max'])}&"
+        url += f"rent={get_string_range(CONFIG['house_config']['rent']['min'], CONFIG['house_config']['rent']['max'])}&"
 
     if CONFIG['house_config']['size']['max'] != 0 or CONFIG['house_config']['size']['min'] != 0:
-        out += f"size={get_string_range(CONFIG['house_config']['size']['min'], CONFIG['house_config']['size']['max'])}&"
+        url += f"size={get_string_range(CONFIG['house_config']['size']['min'], CONFIG['house_config']['size']['max'])}&"
 
     if CONFIG['house_config']['rooms'] != "":
-        out += f"rooms={get_room_numbers(CONFIG['house_config']['rooms'])}&"
+        url += f"rooms={get_room_numbers(CONFIG['house_config']['rooms'])}&"
 
-    if out != "" and out[-1] == '&':
-        return out[:-1]
+    if url != "" and url[-1] == '&':
+        return url[:-1]
 
-    return out
+    return url
 
 
 def get_more_house_info(token):
     print(f'getting additional info for {token}')
 
-    out = {
+    result = {
         'land_area': '',
         'area': '',
         'year_of_construction': '',
@@ -125,22 +125,22 @@ def get_more_house_info(token):
     for item in top_info:
         sub_items = item.find_all('span')
         if sub_items[0].text == 'متراژ':
-            out['area'] = sub_items[1].text
+            result['area'] = sub_items[1].text
         if sub_items[0].text == 'ساخت':
-            out['year_of_construction'] = sub_items[1].text
+            result['year_of_construction'] = sub_items[1].text
 
     info = soup.find_all('div', class_='kt-base-row kt-base-row--large kt-unexpandable-row')
 
     for item in info:
         if item.find("p", class_='kt-base-row__title kt-unexpandable-row__title').text == 'متراژ زمین':
-            out['land_area'] = item.find("p", class_='kt-unexpandable-row__value').text
+            result['land_area'] = item.find("p", class_='kt-unexpandable-row__value').text
             break
 
-    return out
+    return result
 
 
 def get_data():
-    out = []
+    result = []
     last_post_date = 0
     index = 0
 
@@ -160,7 +160,7 @@ def get_data():
             response = requests.post(CONST['api_url'], data=json_payload, headers=header)
 
         else:
-            response = requests.get(CONST['api_url_page0'] + page_0_url())
+            response = requests.get(CONST['api_url_page0'] + get_page_0_url())
 
         page = response.json()
         last_post_date = page['last_post_date']
@@ -185,13 +185,13 @@ def get_data():
                 data['image_url'] = ""
 
             data.update(get_more_house_info(data['token']))
-            out.append(data)
+            result.append(data)
 
         index += 1
 
-    print(f'found {len(out)} posts')
+    print(f'found {len(result)} posts')
 
-    return out
+    return result
 
 
 def save_data(data):
@@ -202,12 +202,13 @@ def save_data(data):
 
 
 def get_new_data(received_data):
+    # compare new received data with old data and exclude new data
     new_data = []
-    all_records_tokens = [record.token for record in read_records(get_all=True)]
+    all_tokens = [record.token for record in read_records(get_all=True)]
 
     for d in received_data:
         # check if token (d first index) in stored records
-        if d['token'] not in all_records_tokens:
+        if d['token'] not in all_tokens:
             new_data.append(d)
 
     return new_data
@@ -248,7 +249,7 @@ def send_message(chat_id, text):
                 return True
 
         except Exception as e:
-            print("--- ERROR at send message---")
+            print("--- ERROR at send message ---")
             print(e)
 
     return False
@@ -278,7 +279,7 @@ def notify_user(chat_id, row):
     global SEND_MESSAGES_COUNTER
 
     if SEND_MESSAGES_COUNTER % 20 == 0:
-        print('waiting for 10sec before sending more messages')
+        print('waiting for 10 seconds')
         time.sleep(10)
 
     SEND_MESSAGES_COUNTER += 1
@@ -307,7 +308,7 @@ def notify_all(chat_id, data):
     return not_sent
 
 
-def main():
+def start_app():
     # save old data which not sent
     not_sent_data = read_records(send_status=False)
     # get new data from divar
@@ -329,7 +330,6 @@ def main():
             record_tokens.append(d['token'])
 
     # iterate on not sent data
-    if not_sent_data:
         for d in not_sent_data:
             try:
                 if d[1]['token'] in record_tokens:
