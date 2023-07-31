@@ -301,7 +301,7 @@ def notify_all(chat_id, data):
     for row in data:
         sent = notify_user(chat_id, row)
         if not sent:
-            print(f"couldn't sent to user {chat_id} this message :{row}")
+            print(f"couldn't sen to user {chat_id} this message :{row}")
             not_sent.append([chat_id, row])
 
     return not_sent
@@ -332,7 +332,7 @@ def main():
     if not_sent_data:
         for d in not_sent_data:
             try:
-                if d[1]['token'] in record_tokens:  # which added in line 316
+                if d[1]['token'] in record_tokens:
                     update_record(d[1]['token'], new_state=False)
             except Exception:
                 if d.token in record_tokens:

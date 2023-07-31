@@ -40,11 +40,11 @@
                 <p>Credit range from :</p>
                 <div class="input-group mb-3">
                     <input type="number" class="form-control" placeholder="Minimum" name="credit_min"
-                           value="{{ my_config.credit.min }}"
+                           value="{{ latest_config.credit.min }}"
                            required>
                     <span class="input-group-text">to</span>
                     <input type="number" class="form-control" placeholder="Maximum" name="credit_max"
-                           value="{{ my_config.credit.max }}"
+                           value="{{ latest_config.credit.max }}"
                            required>
                 </div>
             </div>
@@ -54,11 +54,11 @@
                 <p>Rent range from :</p>
                 <div class="input-group mb-3">
                     <input type="number" class="form-control" placeholder="Minimum" name="rent_min"
-                           value="{{ my_config.rent.min }}"
+                           value="{{ latest_config.rent.min }}"
                            required>
                     <span class="input-group-text">to</span>
                     <input type="number" class="form-control" placeholder="Maximum" name="rent_max"
-                           value="{{ my_config.rent.max }}"
+                           value="{{ latest_config.rent.max }}"
                            required>
                 </div>
             </div>
@@ -69,11 +69,11 @@
                 <p>Size range from :</p>
                 <div class="input-group mb-3">
                     <input type="number" class="form-control" placeholder="Minimum" name="size_min"
-                           value="{{ my_config.size.min }}"
+                           value="{{ latest_config.size.min }}"
                            required>
                     <span class="input-group-text">to</span>
                     <input type="number" class="form-control" placeholder="Maximum" name="size_max"
-                           value="{{ my_config.size.max }}" required>
+                           value="{{ latest_config.size.max }}" required>
                 </div>
             </div>
 
@@ -82,32 +82,32 @@
                 <p>Room count :</p>
 
                 <select class="form-select" name="rooms">
-                    {% if my_config.rooms == "بدون اتاق" %}
+                    {% if latest_config.rooms == "بدون اتاق" %}
                         <option value="بدون اتاق" selected>0 (No room!)</option>
                     {% else %}
                         <option value="بدون اتاق">0 (No room!)</option>
                     {% endif %}
-                    {% if my_config.rooms == "یک" %}
+                    {% if latest_config.rooms == "یک" %}
                         <option value="یک" selected>1</option>
                     {% else %}
                         <option value="یک">1</option>
                     {% endif %}
-                    {% if my_config.rooms == "دو" %}
+                    {% if latest_config.rooms == "دو" %}
                         <option value="دو" selected>2</option>
                     {% else %}
                         <option value="دو">2</option>
                     {% endif %}
-                    {% if my_config.rooms == "سه" %}
+                    {% if latest_config.rooms == "سه" %}
                         <option value="سه" selected>3</option>
                     {% else %}
                         <option value="سه">3</option>
                     {% endif %}
-                    {% if my_config.rooms == "چهار" %}
+                    {% if latest_config.rooms == "چهار" %}
                         <option value="چهار" selected>4</option>
                     {% else %}
                         <option value="چهار">4</option>
                     {% endif %}
-                    {% if my_config.rooms == "بیشتر" %}
+                    {% if latest_config.rooms == "بیشتر" %}
                         <option value="بیشتر" selected>more (>4)</option>
                     {% else %}
                         <option value="بیشتر">more (>4)</option>
