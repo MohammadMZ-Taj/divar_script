@@ -5,14 +5,14 @@ engine, session = get_session()
 Base.metadata.create_all(bind=engine)
 
 
-def read_records(sent_status=True, get_all=False):
+def read_records(send_status=True, get_all=False):
     if get_all:
         return session.query(Record).all()
-    return session.query(Record).filter(Record.is_sent == sent_status).all()
+    return session.query(Record).filter(Record.is_sent == send_status).all()
 
 
 def update_record(record_token, new_state):
-    record = session.query(Record).filter(Record.token == record_token).all()[0]
+    record = session.query(Record).filter(Record.token == record_token)
     record.is_sent = new_state
     session.commit()
 
@@ -25,7 +25,5 @@ def save_record(token, title, top_description_text, middle_description_text, bot
                         image_url, land_area, area, year_of_construction, is_sent)
         session.add(record)
         session.commit()
-        return True
     except Exception as e:
         print(e)
-        return False
