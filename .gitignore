@@ -5,5 +5,3 @@ venv/
 __pycache__/
 test.py
 local_settings.py
-templates/img/
-test.html

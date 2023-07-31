@@ -279,7 +279,7 @@ def notify_user(chat_id, row):
 
     if SEND_MESSAGES_COUNTER % 20 == 0:
         print('waiting for 60sec before sending more messages')
-        time.sleep(60)
+        time.sleep(10)
 
     SEND_MESSAGES_COUNTER += 1
 

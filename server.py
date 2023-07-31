@@ -17,10 +17,17 @@ def home():
         CONFIG['house_config']['size']['max'] = int(request.form['size_max'])
         CONFIG['house_config']['size']['min'] = int(request.form['size_min'])
         records = main()
-        return render_template('home.html', records=records, record_count=len(records))
+        latest_config = {
+            'credit_max':CONFIG['house_config']['credit']['max'],
+            'credit_min': CONFIG['house_config']['credit']['max'],
+            'rent_max': CONFIG['house_config']['rent']['max'],
+            'rent_min': CONFIG['house_config']['rent']['min'],
+            'rooms': CONFIG['house_config']['rooms'],
+        }
+        return render_template('home.html', records=records, record_count=len(records), my_config=CONFIG['house_config'])
     else:
-        records = read_records(get_all=True)
-        return render_template('home.html', records=records, record_count=len(records))
+
+        return render_template('home.html', my_config=CONFIG['house_config'])
 
 
 if __name__ == "__main__":

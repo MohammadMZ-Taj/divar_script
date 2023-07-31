@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap demo</title>
+    <title>DivarVar</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
     <style>
@@ -39,10 +39,12 @@
 
                 <p>Credit range from :</p>
                 <div class="input-group mb-3">
-                    <input type="number" class="form-control" placeholder="Minimum" name="credit_min" value="500000000"
+                    <input type="number" class="form-control" placeholder="Minimum" name="credit_min"
+                           value="{{ my_config.credit.min }}"
                            required>
                     <span class="input-group-text">to</span>
-                    <input type="number" class="form-control" placeholder="Maximum" name="credit_max" value="2000000000"
+                    <input type="number" class="form-control" placeholder="Maximum" name="credit_max"
+                           value="{{ my_config.credit.max }}"
                            required>
                 </div>
             </div>
@@ -51,10 +53,12 @@
 
                 <p>Rent range from :</p>
                 <div class="input-group mb-3">
-                    <input type="number" class="form-control" placeholder="Minimum" name="rent_min" value="1000000"
+                    <input type="number" class="form-control" placeholder="Minimum" name="rent_min"
+                           value="{{ my_config.rent.min }}"
                            required>
                     <span class="input-group-text">to</span>
-                    <input type="number" class="form-control" placeholder="Maximum" name="rent_max" value="80000000"
+                    <input type="number" class="form-control" placeholder="Maximum" name="rent_max"
+                           value="{{ my_config.rent.max }}"
                            required>
                 </div>
             </div>
@@ -64,10 +68,12 @@
 
                 <p>Size range from :</p>
                 <div class="input-group mb-3">
-                    <input type="number" class="form-control" placeholder="Minimum" name="size_min" value="200"
+                    <input type="number" class="form-control" placeholder="Minimum" name="size_min"
+                           value="{{ my_config.size.min }}"
                            required>
                     <span class="input-group-text">to</span>
-                    <input type="number" class="form-control" placeholder="Maximum" name="size_max" required>
+                    <input type="number" class="form-control" placeholder="Maximum" name="size_max"
+                           value="{{ my_config.size.max }}" required>
                 </div>
             </div>
 
@@ -76,12 +82,37 @@
                 <p>Room count :</p>
 
                 <select class="form-select" name="rooms">
-                    <option value="بدون اتاق">0 (No room!)</option>
-                    <option value="یک">1</option>
-                    <option value="دو">2</option>
-                    <option value="سه">3</option>
-                    <option value="چهار">4</option>
-                    <option value="بیشتر" selected>more (>4)</option>
+                    {% if my_config.rooms == "بدون اتاق" %}
+                        <option value="بدون اتاق" selected>0 (No room!)</option>
+                    {% else %}
+                        <option value="بدون اتاق">0 (No room!)</option>
+                    {% endif %}
+                    {% if my_config.rooms == "یک" %}
+                        <option value="یک" selected>1</option>
+                    {% else %}
+                        <option value="یک">1</option>
+                    {% endif %}
+                    {% if my_config.rooms == "دو" %}
+                        <option value="دو" selected>2</option>
+                    {% else %}
+                        <option value="دو">2</option>
+                    {% endif %}
+                    {% if my_config.rooms == "سه" %}
+                        <option value="سه" selected>3</option>
+                    {% else %}
+                        <option value="سه">3</option>
+                    {% endif %}
+                    {% if my_config.rooms == "چهار" %}
+                        <option value="چهار" selected>4</option>
+                    {% else %}
+                        <option value="چهار">4</option>
+                    {% endif %}
+                    {% if my_config.rooms == "بیشتر" %}
+                        <option value="بیشتر" selected>more (>4)</option>
+                    {% else %}
+                        <option value="بیشتر">more (>4)</option>
+                    {% endif %}
+
                 </select>
 
             </div>
@@ -95,7 +126,9 @@
     </form>
     {% if records %}
         <div class="row">
+        {% if record_count %}
             <p>{{ record_count }} result(s) found.</p>
+        {% endif %}
             {% for record in records %}
                 <div class="col-6">
                     <a href="https://divar.ir/v/{{ record.token }}/" class="btn btn-primary" target="_blank"
@@ -117,13 +150,13 @@
                                             {{ record.bottom_description_text }}</p>
                                     </div>
                                     <div class="col-6">
-                                        {% if record.image_url %}
-                                            <img class="box-shadow my-auto" style="width: 18em; height: 14em;"
-                                                 src="{{ record.image_url }}" alt="image">
+                                        {% if record.image_url != "" %}
+                                            <img class="box-shadow my-auto rounded" style="width: 18em; height: 14em;"
+                                                 src="{{ record.image_url }}" alt="record_image">
                                         {% else %}
-                                            <img src="img/House-Suburban.jpg" class="box-shadow my-auto"
-                                                 style="width: 18em; height: 14em;"
-                                                 alt="image">
+                                            <img class="box-shadow my-auto rounded" style="width: 18em; height: 14em;"
+                                                 src="https://papik.pro/en/uploads/posts/2022-06/1654807393_44-papik-pro-p-cute-drawing-of-a-house-45.jpg"
+                                                 alt="record_cover">
                                         {% endif %}
                                     </div>
                                 </div>
@@ -134,6 +167,7 @@
             {% endfor %}
         </div>
     {% endif %}
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
