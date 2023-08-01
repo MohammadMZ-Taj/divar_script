@@ -1,5 +1,6 @@
 from flask import Flask, request, render_template
 from main import CONFIG, start_app
+from db_crud import read_records
 
 app = Flask(__name__)
 
@@ -15,10 +16,12 @@ def home():
         CONFIG['house_config']['size']['max'] = int(request.form['size_max'])
         CONFIG['house_config']['size']['min'] = int(request.form['size_min'])
         records = start_app()
-        return render_template('home.html', records=records, record_count=len(records), latest_config=CONFIG['house_config'])
-    else:
-
-        return render_template('home.html', latest_config=CONFIG['house_config'])
+        return render_template('home.html', records=records, record_count=len(records),
+                               latest_config=CONFIG['house_config'])
+    else:  # GET request
+        records = read_records()
+        return render_template('home.html', latest_config=CONFIG['house_config'], records=records,
+                               record_count=len(records))
 
 
 if __name__ == "__main__":

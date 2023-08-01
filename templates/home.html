@@ -17,7 +17,27 @@
             transition: all .2s ease-out;
         }
 
+        .search-box-shadow {
+            -webkit-box-shadow: 0 1px 1px rgba(72, 78, 85, .6);
+            box-shadow: 0em .4em .5em rgba(72, 78, 85, .4);
+            -webkit-transition: all .2s ease-out;
+            -moz-transition: all .2s ease-out;
+            -ms-transition: all .2s ease-out;
+            -o-transition: all .2s ease-out;
+            transition: all .2s ease-out;
+        }
+
         .box-shadow:hover {
+            -webkit-box-shadow: 0 20px 40px rgba(72, 78, 85, .6);
+            box-shadow: 0 20px 40px rgba(72, 78, 85, .6);
+            -webkit-transform: translateY(-15px);
+            -moz-transform: translateY(-15px);
+            -ms-transform: translateY(-15px);
+            -o-transform: translateY(-15px);
+            transform: translateY(-5px);
+        }
+
+        .search-box-shadow:hover {
             -webkit-box-shadow: 0 20px 40px rgba(72, 78, 85, .6);
             box-shadow: 0 20px 40px rgba(72, 78, 85, .6);
             -webkit-transform: translateY(-15px);
@@ -33,141 +53,156 @@
     <div class="row my-4">
         <div style="height: 20em; background-color: #a5a5a5;"></div>
     </div>
-    <form action="" method="POST">
-        <div class="row">
-            <div class="col-3">
+    <div class="row">
+        <div class="col-8">
 
-                <p>Credit range from :</p>
-                <div class="input-group mb-3">
-                    <input type="number" class="form-control" placeholder="Minimum" name="credit_min"
-                           value="{{ latest_config.credit.min }}"
-                           required>
-                    <span class="input-group-text">to</span>
-                    <input type="number" class="form-control" placeholder="Maximum" name="credit_max"
-                           value="{{ latest_config.credit.max }}"
-                           required>
-                </div>
-            </div>
+            {% if records %}
 
-            <div class="col-3">
+                {% if record_count %}
+                    <div class="alert alert-info" role="alert">
+                        <p class="mb-0"><span class="fs-5">✔️</span>{{ record_count }} result(s) found.</p>
+                    </div>
+                {% endif %}
 
-                <p>Rent range from :</p>
-                <div class="input-group mb-3">
-                    <input type="number" class="form-control" placeholder="Minimum" name="rent_min"
-                           value="{{ latest_config.rent.min }}"
-                           required>
-                    <span class="input-group-text">to</span>
-                    <input type="number" class="form-control" placeholder="Maximum" name="rent_max"
-                           value="{{ latest_config.rent.max }}"
-                           required>
-                </div>
-            </div>
-
-
-            <div class="col-3">
-
-                <p>Size range from :</p>
-                <div class="input-group mb-3">
-                    <input type="number" class="form-control" placeholder="Minimum" name="size_min"
-                           value="{{ latest_config.size.min }}"
-                           required>
-                    <span class="input-group-text">to</span>
-                    <input type="number" class="form-control" placeholder="Maximum" name="size_max"
-                           value="{{ latest_config.size.max }}" required>
-                </div>
-            </div>
-
-            <div class="col-3">
-
-                <p>Room count :</p>
-
-                <select class="form-select" name="rooms">
-                    {% if latest_config.rooms == "بدون اتاق" %}
-                        <option value="بدون اتاق" selected>0 (No room!)</option>
-                    {% else %}
-                        <option value="بدون اتاق">0 (No room!)</option>
-                    {% endif %}
-                    {% if latest_config.rooms == "یک" %}
-                        <option value="یک" selected>1</option>
-                    {% else %}
-                        <option value="یک">1</option>
-                    {% endif %}
-                    {% if latest_config.rooms == "دو" %}
-                        <option value="دو" selected>2</option>
-                    {% else %}
-                        <option value="دو">2</option>
-                    {% endif %}
-                    {% if latest_config.rooms == "سه" %}
-                        <option value="سه" selected>3</option>
-                    {% else %}
-                        <option value="سه">3</option>
-                    {% endif %}
-                    {% if latest_config.rooms == "چهار" %}
-                        <option value="چهار" selected>4</option>
-                    {% else %}
-                        <option value="چهار">4</option>
-                    {% endif %}
-                    {% if latest_config.rooms == "بیشتر" %}
-                        <option value="بیشتر" selected>more (>4)</option>
-                    {% else %}
-                        <option value="بیشتر">more (>4)</option>
-                    {% endif %}
-
-                </select>
-
-            </div>
-
-        </div>
-        <div class="row mt-2 mb-3">
-            <button class="btn btn-primary">
-                search
-            </button>
-        </div>
-    </form>
-    {% if records %}
-        <div class="row">
-        {% if record_count %}
-            <p>{{ record_count }} result(s) found.</p>
-        {% endif %}
-            {% for record in records %}
-                <div class="col-6">
-                    <a href="https://divar.ir/v/{{ record.token }}/" class="btn btn-primary" target="_blank"
-                       style="text-decoration: none; color:  black;border:none; background-color: white;">
-                        <div class="card box-shadow card-hover border-0" style="width: 40em; height:20em;">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <h4>{{ record.title }}</h4>
-                                        {% if record.land_area %}
-                                            <p>زیربنا : {{ record.land_area }} مترمربع</p>
-                                        {% endif %}
-                                        {% if record.area %}
-                                            <p>مساحت : {{ record.area }} مترمربع</p>
-                                        {% endif %}
-                                        <h6>:توضیحات بیشتر</h6>
-                                        <p>{{ record.top_description_text }}
-                                            {{ record.middle_description_text }}
-                                            {{ record.bottom_description_text }}</p>
-                                    </div>
-                                    <div class="col-6">
-                                        {% if record.image_url != "" %}
-                                            <img class="box-shadow my-auto rounded" style="width: 18em; height: 14em;"
-                                                 src="{{ record.image_url }}" alt="record_image">
-                                        {% else %}
-                                            <img class="box-shadow my-auto rounded" style="width: 18em; height: 14em;"
-                                                 src="https://papik.pro/en/uploads/posts/2022-06/1654807393_44-papik-pro-p-cute-drawing-of-a-house-45.jpg"
-                                                 alt="record_cover">
-                                        {% endif %}
+                {% for record in records %}
+                    <div class="row">
+                        <a href="https://divar.ir/v/{{ record.token }}/" class="btn btn-primary" target="_blank"
+                           style="text-decoration: none; color:  black;border:none; background-color: white;">
+                            <div class="card box-shadow card-hover border-0" style="height:20em;">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <h4>{{ record.title }}</h4>
+                                            {% if record.land_area %}
+                                                <p>متراژ زمین : {{ record.land_area }} مترمربع</p>
+                                            {% endif %}
+                                            {% if record.area %}
+                                                <p>متراژ : {{ record.area }} مترمربع</p>
+                                            {% endif %}
+                                            <h6>:توضیحات بیشتر</h6>
+                                            <p>{{ record.top_description_text }}
+                                                {{ record.middle_description_text }}
+                                                {{ record.bottom_description_text }}</p>
+                                        </div>
+                                        <div class="col-6">
+                                            {% if record.image_url %}
+                                                <img class="box-shadow my-auto rounded"
+                                                     style="width: 23em; height: 18em;"
+                                                     src="{{ record.image_url }}" alt="record_image">
+                                            {% else %}
+                                                <img class="box-shadow my-auto rounded"
+                                                     style="width: 23em; height: 18em;"
+                                                     src="https://papik.pro/en/uploads/posts/2022-06/1654807393_44-papik-pro-p-cute-drawing-of-a-house-45.jpg"
+                                                     alt="record_cover">
+                                            {% endif %}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </a>
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
+                        </a>
+                    </div>
+                {% endfor %}
+            {% endif %}
 
+        </div>
+        <div class="col-4">
+            <div class="card sticky-top search-box-shadow card-hover border-0">
+                <div class="card-body">
+                    <form action="" method="POST">
+                        <div class="row">
+
+                            <p class="text-end">بازه پیش پرداخت از</p>
+                            <div class="input-group mb-3">
+                                <input type="number" class="form-control" placeholder="Minimum" name="credit_max"
+                                       value="{{ latest_config.credit.max }}"
+                                       required>
+                                <span class="input-group-text">تا</span>
+                                <input type="number" class="form-control" placeholder="Maximum" name="credit_min"
+                                       value="{{ latest_config.credit.min }}"
+                                       required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+
+                            <p class="text-end">بازه اجاره از</p>
+                            <div class="input-group mb-3">
+                                <input type="number" class="form-control" placeholder="Minimum" name="rent_max"
+                                       value="{{ latest_config.rent.max }}"
+                                       required>
+                                <span class="input-group-text">تا</span>
+                                <input type="number" class="form-control" placeholder="Maximum" name="rent_min"
+                                       value="{{ latest_config.rent.min }}"
+                                       required>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+
+                            <p class="text-end">متراژ از</p>
+                            <div class="input-group mb-3">
+                                <input type="number" class="form-control" placeholder="Minimum" name="size_max"
+                                       value="{{ latest_config.size.max }}" required>
+                                <span class="input-group-text">تا</span>
+                                <input type="number" class="form-control" placeholder="Maximum" name="size_min"
+                                       value="{{ latest_config.size.min }}"
+                                       required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+
+                            <p class="text-end">تعداد اتاق</p>
+
+                            <select class="form-select" name="rooms">
+                                {% if latest_config.rooms == "بدون اتاق" %}
+                                    <option value="بدون اتاق" selected>0 (بدون اتاق)</option>
+                                {% else %}
+                                    <option value="بدون اتاق">0 (بدون اتاق)</option>
+                                {% endif %}
+                                {% if latest_config.rooms == "یک" %}
+                                    <option value="یک" selected>1</option>
+                                {% else %}
+                                    <option value="یک">1</option>
+                                {% endif %}
+                                {% if latest_config.rooms == "دو" %}
+                                    <option value="دو" selected>2</option>
+                                {% else %}
+                                    <option value="دو">2</option>
+                                {% endif %}
+                                {% if latest_config.rooms == "سه" %}
+                                    <option value="سه" selected>3</option>
+                                {% else %}
+                                    <option value="سه">3</option>
+                                {% endif %}
+                                {% if latest_config.rooms == "چهار" %}
+                                    <option value="چهار" selected>4</option>
+                                {% else %}
+                                    <option value="چهار">4</option>
+                                {% endif %}
+                                {% if latest_config.rooms == "بیشتر" %}
+                                    <option value="بیشتر" selected>بیشتر (>4)</option>
+                                {% else %}
+                                    <option value="بیشتر">بیشتر (>4)</option>
+                                {% endif %}
+
+                            </select>
+
+                        </div>
+
+                        <div class="row mt-3 mx-3">
+                            <button class="btn btn-primary ">
+                                جستجو
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"

@@ -1,12 +1,28 @@
 # Divar Script
 A simple python script which collects house information (in [Shiraz](https://en.wikipedia.org/wiki/Shiraz)) from divar.ir and sends to telegram.
+
 # Technologies and Frameworks
 sqlalchemy, BeautifulSoap4, postgresql, flask and telegram apis
+
 # Requirements
-Install python packages from requirements.txt:
+The Project requires these packages:
+```
+beautifulsoup4==4.12.2
+Flask==2.3.2
+psycopg2-binary==2.9.6
+PySocks==1.7.1
+requests==2.31.0
+SQLAlchemy==2.0.19
+SQLAlchemy-Utils==0.41.1
+...
+```
+and some others.
+
+Install all python packages from requirements.txt:
 ```
 pip install -r requirements.txt
 ```
+### Database configurations
 You also need to have [Postgresql](https://www.postgresql.org/) on your system. Create local_settings.py and add your database configuration in it, like this example:
 ```
 postgresql = {
@@ -18,7 +34,7 @@ postgresql = {
     }
 ```
 # How to run
-Set your `bale bot api` you got from @botfather in `config.json`.
+Set your `bale bot api` you got from @botfather in `config.py`.
 
 You can get the chat id you want the bot to send message to when you go to `web.bale.ai`.
 
@@ -30,185 +46,5 @@ python3 server.py
 ```
 Then load the web page on your browser. Set your own configurations and press on the search bottom.
 
-## Proxies
-You can set proxies in `config.json`.
-
-# Districts
-Districts should be one or more of these items:
-```
-'آب جوار'
-'آبیاری'
-'آرامستان دارالرحمه'
-'ابونصر'
-'ابیوردی'
-'احمدآباد'
-'احمدی'
-'ارم'
-'اسحاق بیگ'
-'اصلاح‌نژاد'
-'اطلسی'
-'امام حسین'
-'بازار'
-'باغ تخت'
-'بالا کفت'
-'بریجستون'
-'بعثت'
-'بنکداران'
-'پارک آزادی'
-'پانصد دستگاه (بلوار رحمت)'
-'پای کتا'
-'پردیس ارم'
-'پودنک'
-'تاچارا'
-'تپه تلویزیون'
-'تحولی'
-'ترکان'
-'ترمینال باربری'
-'تل حسین‌آباد'
-'تلخ داش'
-'تندگویان'
-'جانبازان'
-'جمهوری'
-'جوادیه'
-'چغا'
-'چنچنه'
-'چو گیاه'
-'حافظیه'
-'حسین‌آباد'
-'خلدبرین'
-'خلیلی'
-'دانشگاه شهید باهنر'
-'دباغ خانه'
-'درکی'
-'دروازه اصفهان'
-'دروازه کازرون'
-'دست خضر'
-'دشت چنار'
-'دوکوهک'
-'ده پیاله'
-'دینکان'
-'رحمت‌آباد'
-'رضوان'
-'رکن‌آباد'
-'ریشمک'
-'زرگری'
-'زرهی'
-'زند'
-'زیباشهر'
-'سامان'
-'سایت اداری'
-'ستارخان'
-'سجاد (بنی هاشم)'
-'سر باغ'
-'سعدیه'
-'سهل‌آباد'
-'سیلو'
-'سینما سعدی'
-'شاه قلی بیگی'
-'شریف‌آباد'
-'شهر صدرا'
-'شهرک آرین'
-'شهرک امام حسین'
-'شهرک امام رضا (فرگاز)'
-'شهرک امیر کبیر'
-'شهرک ایثار'
-'شهرک باهنر'
-'شهرک برق'
-'شهرک بزین'
-'شهرک بوتان'
-'شهرک پردیس'
-'شهرک پرواز'
-'شهرک جماران'
-'شهرک حجت‌آباد'
-'شهرک دارائی'
-'شهرک سجادیه'
-'شهرک سراج'
-'شهرک سعدی'
-'شهرک شهید بهشتی'
-'شهرک شهید مطهری'
-'شهرک عرفان'
-'شهرک فجر'
-'شهرک قصر قمشه'
-'شهرک کوشکک'
-'شهرک گلستان'
-'شهرک گلستان شمالی'
-'شهرک گلها'
-'شهرک مخابرات'
-'شهرک مدرس'
-'شهرک مهدی‌آباد'
-'شهرک مهرگان'
-'شهرک نصر'
-'شهرک نواب صفوی'
-'شهرک نیروی انتظامی'
-'شهرک والفجر'
-'شهرک ولیعصر'
-'شهید بهنام امیری'
-'شیخ علی چوپان'
-'شیشه‌گری'
-'صاحب الزمان'
-'صاحب دیوان'
-'عادل‌آباد (بلوار عدالت)'
-'عفیف‌آباد'
-'علی‌آباد'
-'فرزانگان'
-'فرهنگ شهر'
-'فرهنگیان'
-'فضل‌آباد'
-'فضیلت'
-'قدوسی شرقی'
-'قدوسی غربی'
-'قصرالدشت'
-'قلعه شاهزاده بیگم'
-'قلعه قبله'
-'قلعه نو'
-'کاراندیش'
-'کفترک'
-'کوزه‌گری'
-'کوی آزادی'
-'کوی زهرا'
-'کوی فرهنگیان'
-'کوی قضات'
-'کوی ولیعصر'
-'کوی یاس'
-'کیان شهر'
-'گلدشت'
-'گلدشت حافظ'
-'گلدشت محمدی'
-'گلدشت معالی‌آباد'
-'گلشن'
-'گلکوب'
-'گود عربان'
-'گویم'
-'لاله'
-'لب آب'
-'لشکری'
-'ماه فیروزان'
-'محراب'
-'محله انجیر (کلبه)'
-'محله سر دزک'
-'محله سنگ سیاه'
-'محله طلاب (نیستان)'
-'محمدیه'
-'محمودیه'
-'مسلم'
-'مشیر غربی'
-'معالی‌آباد'
-'مقر'
-'ملاصدرا'
-'منصورآباد'
-'منطقه هوایی دوران'
-'مهدی‌آباد'
-'مهدیه'
-'میانرود'
-'میدان شاه'
-'نارنجستان'
-'نشاط'
-'نصرآباد'
-'نیایش'
-'وحدت (بلوار مدرس)'
-'وزیرآباد'
-'وصال'
-'ویلاشهر کیمیا'
-'هفت تنان'
-'هویزه'
-```
+### Proxies
+You can set proxies in `config.py`.
