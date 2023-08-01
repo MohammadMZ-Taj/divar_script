@@ -29,13 +29,8 @@ def start_app():
         for d in not_send_data:
             try:
                 if d[1]['token'] in record_tokens:
-                    print('\n\n\n\n\n')
-                    print(d)
-                    print('\n\n\n\n\n')
                     update_record(d[1]['token'], new_state=False)
             except Exception as e:
-                print('-----ERROR-----')
-                print(e)
                 if d.token in record_tokens:
                     update_record(d.token, new_state=False)
     return new_data
