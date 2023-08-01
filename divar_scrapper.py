@@ -50,7 +50,7 @@ def get_room_numbers(persian_room_numbers):
         return False
 
 
-def get_0_page_url():
+def get_first_page_url():
     url = ""
 
     if CONFIG['house_config']['credit']['max'] != 0 or CONFIG['house_config']['credit']['min'] != 0:
@@ -155,7 +155,7 @@ def get_all_home_data():
             response = requests.post(CONST['api_url'], data=json_payload, headers=request_header)
 
         else:
-            response = requests.get(CONST['api_url_0_page'] + get_0_page_url())
+            response = requests.get(CONST['api_url_0_page'] + get_first_page_url())
 
         page = response.json()
         last_post_date = page['last_post_date']

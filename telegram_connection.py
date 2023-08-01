@@ -24,6 +24,7 @@ def send_message(chat_id, text):
         except Exception as e:
             print("--- ERROR at send message ---")
             print(e)
+            print('you may not installed pysocks !')
 
     return False
 
@@ -40,10 +41,10 @@ def send_photo(chat_id, photo_url, caption):
 
             if response.status_code == 200:
                 return True
-
         except Exception as e:
             print("--- ERROR at send photo ---")
             print(e)
+            print('you may not installed pysocks !')
 
     return False
 
@@ -52,12 +53,12 @@ def notify_user(chat_id, record):
     global SEND_MESSAGES_COUNTER
 
     if SEND_MESSAGES_COUNTER % 20 == 0:
-        print('waiting for 10 seconds')
-        time.sleep(10)
+        print('waiting for 5 seconds')
+        time.sleep(5)
 
     SEND_MESSAGES_COUNTER += 1
 
-    if int(record['image_count']) >= 1:
+    if int(record['image_count']) >= 1:   # if record has image
         status = send_photo(chat_id, record['image_url'], get_house_info_string(record))
 
     else:

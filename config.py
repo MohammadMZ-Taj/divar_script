@@ -1,8 +1,8 @@
 CONFIG = {
     "bot_api_key": "insert your bale bot api here",
     "proxies": {
-        "http": "socks5h://localhost:9999",
-        "https": "socks5h://localhost:9999"
+        "http": "socks5h://127.0.0.1:9999",
+        "https": "socks5h://127.0.0.1:9999"
     },
     "house_config": {
         "districts": [],

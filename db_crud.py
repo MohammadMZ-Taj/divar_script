@@ -13,6 +13,7 @@ def read_records(send_status=None):
 
 def update_record(record_token, new_state):
     record = session.query(Record).filter(Record.token == record_token)
+    print(f"update {record_token} to {new_state}")
     record.is_sent = new_state
     session.commit()
 
