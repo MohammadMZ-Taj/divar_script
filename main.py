@@ -16,14 +16,11 @@ def start_app(bot=None, chat_id=None):
 
     if bot and chat_id:
         from telebot import send_result
-        not_send_data = send_result(bot, chat_id, not_send_data, '...')
+        not_send = send_result(bot, chat_id, not_send_data, '...')
+        send_data = [d for d in not_send_data if d not in not_send]
+        not_send_data = not_send
         not_send_data.extend(send_result(bot, chat_id, new_data, 'finish'))
-        send_data = [d for d in new_data if d not in not_send_data]
-        print('\n\n\n\n\n')
-        print(send_data)
-        print('\n\n\n\n\n')
-        print(not_send_data)
-        print('\n\n\n\n\n')
+        send_data.extend([d for d in new_data if d not in not_send_data])
 
     for d in send_data:
         if type(d) == Record:

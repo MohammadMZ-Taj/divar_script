@@ -123,18 +123,22 @@ def send_result(bot, chat_id, data, message):
                    d.bottom_description_text + '\n' + 'متراژ زمین: ' + d.land_area + '\n' + 'متراژ: ' + \
                    d.area + '\n' + 'ساخت: ' + d.year_of_construction + '\n' + 'https://divar.ir/v/' + \
                    d.token + '\n' + d.image_url
-        if not i % 20:
-            sleep(20)
+        sleep(1)
         i += 1
         try:
             bot.send_message(chat_id, text)
         except Exception:
-            not_send.append(d)
+            sleep(15)
+            try:
+                bot.send_message(chat_id, text)
+            except Exception:
+                not_send.append(d)
     try:
         bot.send_message(chat_id, message,
                          reply_markup=ReplyKeyboardMarkup([['set filter'], ['about'], ['exit']], resize_keyboard=True))
     except Exception as e:
         print(e)
+    print(message)
     return not_send
 
 

@@ -12,9 +12,8 @@ def read_records(send_status=None):
 
 
 def update_record(record_token, new_state):
-    record = session.query(Record).filter(Record.token == record_token)
-    print(f"updating {record_token} to {new_state}")
-    record[0].is_sent = new_state
+    record = session.query(Record).filter(Record.token == record_token)[0]
+    record.is_sent = new_state
     session.commit()
 
 
@@ -31,5 +30,4 @@ def save_record(token, title, top_description_text, middle_description_text, bot
 
 
 def find_record(token):
-    record = session.query(Record).filter(Record.token == token)
-    return record
+    return session.query(Record).filter(Record.token == token)
