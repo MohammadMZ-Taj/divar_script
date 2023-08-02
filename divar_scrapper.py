@@ -72,34 +72,32 @@ def get_first_page_url():
     return url
 
 
-def payload_json_schema():
-    out = {
+def get_payload_json_schema():
+    json_schema = {
         "category": {"value": "house-villa-rent"},
         "sort": {"value": "sort_date"},
         "cities": ["6"]
     }
 
     if CONFIG['house_config']['districts']:
-        out['districts'] = {"vacancies": get_district_code()}
+        json_schema['districts'] = {"vacancies": get_district_code()}
 
     if CONFIG['house_config']['credit']['max'] != 0 or CONFIG['house_config']['credit']['min'] != 0:
-        out['credit'] = get_dict_range(CONFIG['house_config']['credit']['min'], CONFIG['house_config']['credit']['max'])
+        json_schema['credit'] = get_dict_range(CONFIG['house_config']['credit']['min'], CONFIG['house_config']['credit']['max'])
 
     if CONFIG['house_config']['rent']['max'] != 0 or CONFIG['house_config']['rent']['min'] != 0:
-        out['rent'] = get_dict_range(CONFIG['house_config']['rent']['min'], CONFIG['house_config']['rent']['max'])
+        json_schema['rent'] = get_dict_range(CONFIG['house_config']['rent']['min'], CONFIG['house_config']['rent']['max'])
 
     if CONFIG['house_config']['size']['max'] != 0 or CONFIG['house_config']['size']['min'] != 0:
-        out['size'] = get_dict_range(CONFIG['house_config']['size']['min'], CONFIG['house_config']['size']['max'])
+        json_schema['size'] = get_dict_range(CONFIG['house_config']['size']['min'], CONFIG['house_config']['size']['max'])
 
     if CONFIG['house_config']['rooms'] != "":
-        out['rooms'] = {'value': CONFIG['house_config']['rooms']}
+        json_schema['rooms'] = {'value': CONFIG['house_config']['rooms']}
 
-    return out
+    return json_schema
 
 
 def get_more_post_info(token):
-    print(f'getting additional info for {token}')
-
     result = {
         'land_area': '',
         'area': '',
@@ -145,7 +143,7 @@ def get_all_data():
         print(f'reading page: {page_number}')
 
         if page_number > 0:
-            payload = {"page": page_number, "json_schema": payload_json_schema()}
+            payload = {"page": page_number, "json_schema": get_payload_json_schema()}
 
             if last_post_date != 0:
                 payload['last-post-date'] = last_post_date
@@ -174,6 +172,7 @@ def get_all_data():
                                                                       'image_count']
                              }
 
+                print(f"{post_data['token']} gotten.")
                 if post['data']['image_count'] > 0:  # if post has image
                     post_data['image_url'] = post['data']['image_url'][1]['src']
 

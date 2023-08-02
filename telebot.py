@@ -92,7 +92,9 @@ def handle_callback_query(bot: Client, query: CallbackQuery):
 
 
 def send_result(bot, chat_id, data):
-    not_send = []
+    not_send_data = []
+    send_data = []
+
     for d in data:
         if 'title' not in d:
             d['title'] = ''
@@ -116,11 +118,12 @@ def send_result(bot, chat_id, data):
                    'token'] + '\n' + d['image_url']
         try:
             bot.send_message(chat_id, text)
+            send_data.append(d)
         except Exception:
-            not_send.append(d)
+            not_send_data.append(d)
     bot.send_message(chat_id, 'finish',
                      reply_markup=ReplyKeyboardMarkup([['set filter'], ['about'], ['exit']], resize_keyboard=True))
-    return not_send
+    return not_send_data, send_data
 
 
 if __name__ == '__main__':

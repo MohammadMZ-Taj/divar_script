@@ -1,20 +1,19 @@
-# from config import CONFIG
 from divar_scrapper import get_all_data, exclude_new_data
-# from telegram_connection import notify_all
+
 from db_crud import read_records, save_record, update_record
 
 
 def start_app(bot=None, chat_id=None):
     # get old data which not sent
     not_send_data = read_records(send_status=False)
-
+    send_data = []
     data = get_all_data()
 
     new_data = exclude_new_data(data)
 
-    if bot:
+    if bot and chat_id:
         from telebot import send_result
-        not_send_data = send_result(bot, chat_id, not_send_data)
+        not_send_data, send_data = send_result(bot, chat_id, not_send_data)
         not_send_data.extend(send_result(bot, chat_id, new_data))
 
     # get all record tokens
@@ -26,6 +25,11 @@ def start_app(bot=None, chat_id=None):
         if d['token'] not in record_tokens:
             save_record(**d, is_sent=True)
             record_tokens.append(d['token'])
+
+    if send_data:
+        for d in send_data:
+            update_record(d.token, True)
+
 
     # iterate on not sent data
     for d in not_send_data:
