@@ -1,6 +1,7 @@
 from pyrogram import Client
 from pyrogram.types import Message, ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardMarkup, \
     InlineKeyboardButton, CallbackQuery
+from time import sleep
 from teleconfig import *
 from main import start_app
 from config import CONFIG
@@ -31,7 +32,7 @@ def handle_message(bot: Client, message: Message):
     # if message.chat.type != message.chat.type.PRIVATE:
     #     return
     if message.text:
-        if message.text == '/start':
+        if message.text.startswith('/start'):
             bot.send_message(chat_id, 'Welcome to divar script',
                              reply_markup=ReplyKeyboardMarkup([['set filter'], ['about'], ['exit']],
                                                               resize_keyboard=True))
@@ -70,60 +71,71 @@ def handle_message(bot: Client, message: Message):
 def handle_callback_query(bot: Client, query: CallbackQuery):
     chat_id = query.message.chat.id
     if query.data == 'cx':
-        bot.send_message(chat_id, 'enter max_credit: ')
+        bot.send_message(chat_id, 'enter max_credit: ', reply_markup=ReplyKeyboardRemove())
     elif query.data == 'cn':
-        bot.send_message(chat_id, 'enter min_credit: ')
+        bot.send_message(chat_id, 'enter min_credit: ', reply_markup=ReplyKeyboardRemove())
     elif query.data == 'rx':
-        bot.send_message(chat_id, 'enter max_rent: ')
+        bot.send_message(chat_id, 'enter max_rent: ', reply_markup=ReplyKeyboardRemove())
     elif query.data == 'rn':
-        bot.send_message(chat_id, 'enter min_rent: ')
+        bot.send_message(chat_id, 'enter min_rent: ', reply_markup=ReplyKeyboardRemove())
     elif query.data == 'r':
         bot.send_message(chat_id, 'enter rooms_No: ',
                          reply_markup=ReplyKeyboardMarkup([['0', '1', '2'], ['3', '4', 'more']], resize_keyboard=True))
     elif query.data == 'sx':
-        bot.send_message(chat_id, 'enter max_size: ')
+        bot.send_message(chat_id, 'enter max_size: ', reply_markup=ReplyKeyboardRemove())
     elif query.data == 'sn':
-        bot.send_message(chat_id, 'enter min_size: ')
+        bot.send_message(chat_id, 'enter min_size: ', reply_markup=ReplyKeyboardRemove())
     elif query.data == 's':
         bot.send_message(chat_id, 'wait...', reply_markup=ReplyKeyboardRemove())
         start_app(bot, chat_id)
-        save_query.clear()
+    save_query.clear()
     save_query.append(query.data)
 
 
-def send_result(bot, chat_id, data):
-    not_send_data = []
+def send_result(bot, chat_id, data, message):
+    not_send = []
     send_data = []
 
     for d in data:
-        if 'title' not in d:
-            d['title'] = ''
-        if 'top_description_text' not in d:
-            d['top_description_text'] = ''
-        if 'middle_description_text' not in d:
-            d['middle_description_text'] = ''
-        if 'bottom_description_text' not in d:
-            d['bottom_description_text'] = ''
-        if 'land_area' not in d:
-            d['land_area'] = 'unknown'
-        if 'area' not in d:
-            d['area'] = 'unknown'
-        if 'year_of_construction' not in d:
-            d['year_of_construction'] = 'unknown'
-        if 'image_url' not in d:
-            d['image_url'] = ''
-        text = d['title'] + '\n' + d['top_description_text'] + '\n' + d['middle_description_text'] + '\n' + d[
-            'bottom_description_text'] + '\n' + 'متراژ زمین: ' + d['land_area'] + '\n' + 'متراژ: ' + d[
-                   'area'] + '\n' + 'ساخت: ' + d['year_of_construction'] + '\n' + 'https://divar.ir/v/' + d[
-                   'token'] + '\n' + d['image_url']
+        try:
+            if 'title' not in d:
+                d['title'] = ''
+            if 'top_description_text' not in d:
+                d['top_description_text'] = ''
+            if 'middle_description_text' not in d:
+                d['middle_description_text'] = ''
+            if 'bottom_description_text' not in d:
+                d['bottom_description_text'] = ''
+            if 'land_area' not in d:
+                d['land_area'] = 'unknown'
+            if 'area' not in d:
+                d['area'] = 'unknown'
+            if 'year_of_construction' not in d:
+                d['year_of_construction'] = 'unknown'
+            if 'image_url' not in d:
+                d['image_url'] = ''
+            text = d['title'] + '\n' + d['top_description_text'] + '\n' + d['middle_description_text'] + '\n' + d[
+                'bottom_description_text'] + '\n' + 'متراژ زمین: ' + d['land_area'] + '\n' + 'متراژ: ' + d[
+                       'area'] + '\n' + 'ساخت: ' + d['year_of_construction'] + '\n' + 'https://divar.ir/v/' + d[
+                       'token'] + '\n' + d['image_url']
+        except Exception:
+            text = d.title + '\n' + d.top_description_text + '\n' + d.middle_description_text + '\n' + \
+                   d.bottom_description_text + '\n' + 'متراژ زمین: ' + d.land_area + '\n' + 'متراژ: ' + \
+                   d.area + '\n' + 'ساخت: ' + d.year_of_construction + '\n' + 'https://divar.ir/v/' + \
+                   d.token + '\n' + d.image_url
         try:
             bot.send_message(chat_id, text)
             send_data.append(d)
         except Exception:
-            not_send_data.append(d)
-    bot.send_message(chat_id, 'finish',
-                     reply_markup=ReplyKeyboardMarkup([['set filter'], ['about'], ['exit']], resize_keyboard=True))
-    return not_send_data, send_data
+            sleep(3)
+            not_send.append(d)
+        sleep(1)
+    try:
+        bot.send_message(chat_id, message,
+                         reply_markup=ReplyKeyboardMarkup([['set filter'], ['about'], ['exit']], resize_keyboard=True))
+    except Exception as e:
+        print(e)
+    return not_send, send_data
 
 
 if __name__ == '__main__':
