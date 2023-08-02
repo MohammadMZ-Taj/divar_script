@@ -94,7 +94,7 @@ def handle_callback_query(bot: Client, query: CallbackQuery):
 
 def send_result(bot, chat_id, data, message):
     not_send = []
-    i = 0
+    i = 1
     print(len(data), 'is sending')
     for d in data:
         try:
@@ -123,7 +123,8 @@ def send_result(bot, chat_id, data, message):
                    d.bottom_description_text + '\n' + 'متراژ زمین: ' + d.land_area + '\n' + 'متراژ: ' + \
                    d.area + '\n' + 'ساخت: ' + d.year_of_construction + '\n' + 'https://divar.ir/v/' + \
                    d.token + '\n' + d.image_url
-        sleep(i % 5)
+        if not i % 20:
+            sleep(20)
         i += 1
         try:
             bot.send_message(chat_id, text)
