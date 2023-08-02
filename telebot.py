@@ -2,26 +2,10 @@ from pyrogram import Client
 from pyrogram.types import Message, ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardMarkup, \
     InlineKeyboardButton, CallbackQuery
 from teleconfig import *
-from main import CONFIG, start_app
+from main import start_app
+from config import CONFIG
 
 client = Client(name=NAME, bot_token=BOT_TOKEN, api_id=API_ID, api_hash=API_HASH, proxy=PROXY)
-
-data = []
-
-
-class MyUser:
-    def __init__(self, user_id):
-        self.id = user_id
-        self.state = 0
-
-
-def check_user(user_id: MyUser):
-    for user in data:
-        if user_id == user.id:
-            return user
-    new_user = MyUser(user_id)
-    data.append(new_user)
-    return new_user
 
 
 def filters():
@@ -102,33 +86,41 @@ def handle_callback_query(bot: Client, query: CallbackQuery):
         bot.send_message(chat_id, 'enter min_size: ')
     elif query.data == 's':
         bot.send_message(chat_id, 'wait...', reply_markup=ReplyKeyboardRemove())
-        records = start_app()
-        for r in records:
-            if 'title' not in r:
-                r['title'] = ''
-            if 'top_description_text' not in r:
-                r['top_description_text'] = ''
-            if 'middle_description_text' not in r:
-                r['middle_description_text'] = ''
-            if 'bottom_description_text' not in r:
-                r['bottom_description_text'] = ''
-            if 'land_area' not in r:
-                r['land_area'] = 'unknown'
-            if 'area' not in r:
-                r['area'] = 'unknown'
-            if 'year_of_construction' not in r:
-                r['year_of_construction'] = 'unknown'
-            if 'image_url' not in r:
-                r['image_url'] = ''
-            text = r['title'] + '\n' + r['top_description_text'] + '\n' + r['middle_description_text'] + '\n' + r[
-                'bottom_description_text'] + '\n' + 'متراژ زمین: ' + r['land_area'] + '\n' + 'متراژ: ' + r[
-                       'area'] + '\n' + 'ساخت: ' + r['year_of_construction'] + '\n' + 'https://divar.ir/v/' + r[
-                       'token'] + '\n' + r['image_url']
-            bot.send_message(chat_id, text)
-        bot.send_message(chat_id, 'finish',
-                         reply_markup=ReplyKeyboardMarkup([['set filter'], ['about'], ['exit']], resize_keyboard=True))
-    save_query.clear()
+        start_app(bot, chat_id)
+        save_query.clear()
     save_query.append(query.data)
+
+
+def send_result(bot, chat_id, data):
+    not_send = []
+    for d in data:
+        if 'title' not in d:
+            d['title'] = ''
+        if 'top_description_text' not in d:
+            d['top_description_text'] = ''
+        if 'middle_description_text' not in d:
+            d['middle_description_text'] = ''
+        if 'bottom_description_text' not in d:
+            d['bottom_description_text'] = ''
+        if 'land_area' not in d:
+            d['land_area'] = 'unknown'
+        if 'area' not in d:
+            d['area'] = 'unknown'
+        if 'year_of_construction' not in d:
+            d['year_of_construction'] = 'unknown'
+        if 'image_url' not in d:
+            d['image_url'] = ''
+        text = d['title'] + '\n' + d['top_description_text'] + '\n' + d['middle_description_text'] + '\n' + d[
+            'bottom_description_text'] + '\n' + 'متراژ زمین: ' + d['land_area'] + '\n' + 'متراژ: ' + d[
+                   'area'] + '\n' + 'ساخت: ' + d['year_of_construction'] + '\n' + 'https://divar.ir/v/' + d[
+                   'token'] + '\n' + d['image_url']
+        try:
+            bot.send_message(chat_id, text)
+        except Exception:
+            not_send.append(d)
+    bot.send_message(chat_id, 'finish',
+                     reply_markup=ReplyKeyboardMarkup([['set filter'], ['about'], ['exit']], resize_keyboard=True))
+    return not_send
 
 
 if __name__ == '__main__':

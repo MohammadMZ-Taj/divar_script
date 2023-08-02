@@ -134,7 +134,7 @@ def get_more_post_info(token):
     return result
 
 
-def get_all_home_data():
+def get_all_data():
     all_home_data = []
     last_post_date = 0
     page_number = 0
