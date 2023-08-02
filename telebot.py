@@ -94,8 +94,8 @@ def handle_callback_query(bot: Client, query: CallbackQuery):
 
 def send_result(bot, chat_id, data, message):
     not_send = []
-    send_data = []
-
+    i = 0
+    print(len(data), 'is sending')
     for d in data:
         try:
             if 'title' not in d:
@@ -123,19 +123,18 @@ def send_result(bot, chat_id, data, message):
                    d.bottom_description_text + '\n' + 'متراژ زمین: ' + d.land_area + '\n' + 'متراژ: ' + \
                    d.area + '\n' + 'ساخت: ' + d.year_of_construction + '\n' + 'https://divar.ir/v/' + \
                    d.token + '\n' + d.image_url
+        sleep(i % 5)
+        i += 1
         try:
             bot.send_message(chat_id, text)
-            send_data.append(d)
         except Exception:
-            sleep(3)
             not_send.append(d)
-        sleep(1)
     try:
         bot.send_message(chat_id, message,
                          reply_markup=ReplyKeyboardMarkup([['set filter'], ['about'], ['exit']], resize_keyboard=True))
     except Exception as e:
         print(e)
-    return not_send, send_data
+    return not_send
 
 
 if __name__ == '__main__':

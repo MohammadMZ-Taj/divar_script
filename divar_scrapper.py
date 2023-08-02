@@ -183,7 +183,7 @@ def get_all_data():
 
         page_number += 1
 
-    print(f'{len(all_home_data)} post(s) found.')
+    print(f'{len(all_home_data)} posts found.')
 
     return all_home_data
 

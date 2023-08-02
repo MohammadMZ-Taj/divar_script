@@ -14,8 +14,9 @@ def start_app(bot=None, chat_id=None):
 
     if bot and chat_id:
         from telebot import send_result
-        not_send_data, send_data = send_result(bot, chat_id, not_send_data, '...')
+        not_send_data = send_result(bot, chat_id, not_send_data, '...')
         not_send_data.extend(send_result(bot, chat_id, new_data, 'finish'))
+        send_data = [d for d in new_data if d not in not_send_data]
 
     # get all record tokens
     record_tokens = [r.token for r in read_records()]
@@ -27,10 +28,11 @@ def start_app(bot=None, chat_id=None):
             save_record(**d, is_sent=True)
             record_tokens.append(d['token'])
 
-    if send_data:
-        for d in send_data:
-            update_record(d.token, True)
-
+    for d in send_data:
+        try:
+            update_record(d['token'], new_state=True)
+        except Exception:
+            update_record(d.token, new_state=True)
 
     # iterate on not sent data
     for d in not_send_data:
