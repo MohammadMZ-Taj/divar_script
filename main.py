@@ -2,12 +2,14 @@
 from divar_scrapper import get_all_data, exclude_new_data
 
 from db_crud import read_records, save_record, update_record
+from db_model import Record
 
 
 def start_app(bot=None, chat_id=None):
     # get old data which not sent
     not_send_data = read_records(send_status=False)
     send_data = []
+
     data = get_all_data()
 
     new_data = exclude_new_data(data)
@@ -17,29 +19,20 @@ def start_app(bot=None, chat_id=None):
         not_send_data = send_result(bot, chat_id, not_send_data, '...')
         not_send_data.extend(send_result(bot, chat_id, new_data, 'finish'))
         send_data = [d for d in new_data if d not in not_send_data]
-
-    # get all record tokens
-    record_tokens = [r.token for r in read_records()]
-
-    # iterate on all gotten data
-    for d in data:
-        # if data doesn't already exist in db create a record for this data (assuming it is sent)
-        if d['token'] not in record_tokens:
-            save_record(**d, is_sent=True)
-            record_tokens.append(d['token'])
+        print('\n\n\n\n\n')
+        print(send_data)
+        print('\n\n\n\n\n')
+        print(not_send_data)
+        print('\n\n\n\n\n')
 
     for d in send_data:
-        try:
-            update_record(d['token'], new_state=True)
-        except Exception:
-            update_record(d.token, new_state=True)
+        if type(d) == Record:
+            update_record(d.token, True)
+        else:
+            save_record(**d, is_sent=True)
 
-    # iterate on not sent data
     for d in not_send_data:
-        try:
-            if d['token'] in record_tokens:
-                update_record(d['token'], new_state=False)
-        except Exception:
-            if d.token in record_tokens:
-                update_record(d.token, new_state=False)
+        if type(d) != Record:
+            save_record(**d, is_sent=False)
+
     return new_data
