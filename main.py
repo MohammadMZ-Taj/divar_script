@@ -2,6 +2,7 @@ from divar_scrapper import get_all_data, exclude_new_data
 
 from db_crud import read_records, save_record, update_record
 from db_model import Record
+from constants import CONST
 
 
 def start_app(bot=None, chat_id=None):
@@ -36,4 +37,5 @@ def start_app(bot=None, chat_id=None):
 
 if __name__ == '__main__':
     from telebot import client
-    start_app(bot=client, chat_id="-917791804")
+    client.start()
+    start_app(bot=client, chat_id=CONST["chat_id"])

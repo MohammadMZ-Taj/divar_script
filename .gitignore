@@ -6,4 +6,5 @@ __pycache__/
 test.py
 local_settings.py
 teleconfig.py
-mynew_bot.session
+*.session
+*.session-journal
