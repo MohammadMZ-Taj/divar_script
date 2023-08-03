@@ -32,7 +32,7 @@ def start_app(bot=None, chat_id=None):
         if type(d) != Record:
             save_record(**d, is_sent=False)
 
-    return new_data
+    return send_data
 
 
 if __name__ == '__main__':

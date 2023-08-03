@@ -2,7 +2,7 @@
 A simple python script which collects house information (in [Shiraz](https://en.wikipedia.org/wiki/Shiraz)) from divar.ir and sends to telegram.
 
 # Technologies and Frameworks
-sqlalchemy, BeautifulSoap4, postgresql, flask and telegram apis
+sqlalchemy, BeautifulSoap4, postgresql, flask and pyrogram (telegram bot)
 
 # Requirements
 The Project requires these packages:
@@ -40,12 +40,14 @@ API_ID = <your-app-id>
 NAME = '<your-bot-name>'
 API_HASH = "<your-api-hash>"
 BOT_TOKEN = '<your-bot-token>'
+CHAT_ID = "<default-chat-id>"
+
+# if you have proxy add your proxy info
 PROXY = {
     'scheme': 'socks5',
     'hostname': 'localhost',
     'port': 9999,
 }
-CHAT_ID = "<default-chat-id>"
 
 ```
 
