@@ -103,11 +103,6 @@
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-6">
-                                        {% if record.is_sent %}
-                                            <span class="badge text-bg-success">Sent</span>
-                                        	{% else %}
-                                            <span class="badge text-bg-danger">Not sent</span>
-                                        {% endif %}
                                             <h4>{{ record.title }}</h4>
                                             {% if record.land_area %}
                                                 <p>متراژ زمین : {{ record.land_area }} مترمربع</p>
