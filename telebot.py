@@ -29,8 +29,6 @@ save_query = []
 @client.on_message()
 def handle_message(bot: Client, message: Message):
     chat_id = message.chat.id
-    # if message.chat.type != message.chat.type.PRIVATE:
-    #     return
     if message.text:
         if message.text.startswith('/start'):
             bot.send_message(chat_id, 'Welcome to divar script',
@@ -128,11 +126,14 @@ def send_result(bot, chat_id, data, message=""):
         i += 1
         try:
             bot.send_message(chat_id, text)
-        except Exception:
-            sleep(15)
+        except Exception as e1:
+            e = str(e1).split()
+            print(1, i, e1)
+            sleep(int(e[8]))
             try:
                 bot.send_message(chat_id, text)
-            except Exception:
+            except Exception as e2:
+                print(2, i, e2)
                 not_send.append(d)
     try:
         bot.send_message(chat_id, message,
