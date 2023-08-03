@@ -70,6 +70,7 @@ def handle_message(bot: Client, message: Message):
 @client.on_callback_query()
 def handle_callback_query(bot: Client, query: CallbackQuery):
     chat_id = query.message.chat.id
+    print("CHAT ID", chat_id)
     if query.data == 'cx':
         bot.send_message(chat_id, 'enter max_credit: ', reply_markup=ReplyKeyboardRemove())
     elif query.data == 'cn':
@@ -92,10 +93,10 @@ def handle_callback_query(bot: Client, query: CallbackQuery):
     save_query.append(query.data)
 
 
-def send_result(bot, chat_id, data, message):
+def send_result(bot, chat_id, data, message=""):
     not_send = []
     i = 1
-    print(len(data), 'is sending')
+    print(len(data), 'messages are on the way.')
     for d in data:
         try:
             if 'title' not in d:

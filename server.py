@@ -1,7 +1,10 @@
 from flask import Flask, request, render_template
+
 from main import start_app
 from config import CONFIG
 from db_crud import read_records
+from telebot import client
+
 
 app = Flask(__name__)
 
@@ -16,7 +19,7 @@ def home():
         CONFIG['house_config']['rooms'] = request.form['rooms']
         CONFIG['house_config']['size']['max'] = int(request.form['size_max'])
         CONFIG['house_config']['size']['min'] = int(request.form['size_min'])
-        records = start_app()
+        records = start_app(bot=client, chat_id="-917791804")
         return render_template('home.html', records=records, record_count=len(records),
                                latest_config=CONFIG['house_config'])
     else:  # GET request

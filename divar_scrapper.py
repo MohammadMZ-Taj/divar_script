@@ -196,7 +196,7 @@ def exclude_new_data(received_data):
         # check if token (d first index) in stored records
         if d['token'] not in all_tokens:
             new_data.append(d)
-
+    print(f"{len(new_data)} new posts found.")
     return new_data
 
 

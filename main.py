@@ -1,4 +1,3 @@
-# from config import CONFIG
 from divar_scrapper import get_all_data, exclude_new_data
 
 from db_crud import read_records, save_record, update_record
@@ -33,3 +32,8 @@ def start_app(bot=None, chat_id=None):
             save_record(**d, is_sent=False)
 
     return new_data
+
+
+if __name__ == '__main__':
+    from telebot import client
+    start_app(bot=client, chat_id="-917791804")
