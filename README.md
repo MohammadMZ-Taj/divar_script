@@ -1,5 +1,5 @@
 # Divar Script
-A simple python script which collects house information (in [Shiraz](https://en.wikipedia.org/wiki/Shiraz)) from divar.ir and sends to telegram.
+A simple python script which collects house information (in [Shiraz](https://en.wikipedia.org/wiki/Shiraz)) from [divar](divar.ir) and sends result to telegram.
 
 # Technologies and Frameworks
 sqlalchemy, BeautifulSoap4, postgresql, flask and pyrogram (telegram bot)
@@ -21,19 +21,19 @@ Install all python packages from requirements.txt:
 ```
 pip install -r requirements.txt
 ```
-### Database configurations
+## Database configurations
 You also need to have [Postgresql](https://www.postgresql.org/) on your system. Create `local_settings.py` in the root of project and add your database configuration in it, like this example:
 ```
 postgresql = {
-    "user": "your-user-name",
+    "user": "<your-user-name>",
     "password": "********",
-    "host": "your-host", # example: localhost
+    "host": "<your-host>", # example: localhost
     "port": 5432, # postgres default port
-    "db": "your-db-name"
+    "db": "<your-db-name>"
     }
 ```
 
-### Telegram bot configurations
+## Telegram bot configurations
 Create `teleconfig.py` in the root of project and fill the properties like the example below :
 ```
 API_ID = <your-app-id>
@@ -51,9 +51,9 @@ PROXY = {
 
 ```
 
-# How to run
+# Run
 
-Run a terminal in the root of project, then if you want to run flask app, use this command:
+Run a terminal in the root of project, then if you want to run flask app, run this command:
 ```
 python3 server.py 
 ```
@@ -62,7 +62,5 @@ And if you want to run telegram bot, run this one:
 python3 telebot.py
 ```
 
-Then load the web page on your browser. Set your own configurations and press on the search bottom.
+Then load the web page on your browser on `127.0.0.1:5000`. Set your configurations and press on the search bottom.
 
-### Proxies
-You can set proxies in `config.py`.

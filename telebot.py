@@ -140,7 +140,7 @@ def send_result(bot, chat_id, data, message=""):
         bot.send_message(chat_id, message,
                          reply_markup=ReplyKeyboardMarkup([['set filter'], ['about'], ['exit']], resize_keyboard=True))
     except Exception as e:
-        print(e, type(e))
+        print(f"{type(e)} at the end of send_result: {e}")
     print(message)
     return not_send
 

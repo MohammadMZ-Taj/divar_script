@@ -26,7 +26,7 @@ def save_record(token, title, top_description_text, middle_description_text, bot
         session.add(record)
         session.commit()
     except Exception as e:
-        print(e, type(e))
+        print(f"{type(e)} at save_record : {e}")
 
 
 def find_record(token):
