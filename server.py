@@ -1,5 +1,4 @@
 from flask import Flask, request, render_template
-
 from main import start_app
 from config import CONFIG
 from db_crud import read_records
