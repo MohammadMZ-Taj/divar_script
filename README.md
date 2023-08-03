@@ -9,11 +9,10 @@ The Project requires these packages:
 ```
 beautifulsoup4==4.12.2
 Flask==2.3.2
-psycopg2-binary==2.9.6
+Pyrogram~=2.0.106
 PySocks==1.7.1
 requests==2.31.0
 SQLAlchemy==2.0.19
-SQLAlchemy-Utils==0.41.1
 ...
 ```
 and some others.
@@ -23,7 +22,7 @@ Install all python packages from requirements.txt:
 pip install -r requirements.txt
 ```
 ### Database configurations
-You also need to have [Postgresql](https://www.postgresql.org/) on your system. Create local_settings.py and add your database configuration in it, like this example:
+You also need to have [Postgresql](https://www.postgresql.org/) on your system. Create `local_settings.py` in the root of project and add your database configuration in it, like this example:
 ```
 postgresql = {
     "user": "your-user-name",
@@ -33,17 +32,34 @@ postgresql = {
     "db": "your-db-name"
     }
 ```
+
+### Telegram bot configurations
+Create `teleconfig.py` in the root of project and fill the properties like the example below :
+```
+API_ID = <your-app-id>
+NAME = '<your-bot-name>'
+API_HASH = "<your-api-hash>"
+BOT_TOKEN = '<your-bot-token>'
+PROXY = {
+    'scheme': 'socks5',
+    'hostname': 'localhost',
+    'port': 9999,
+}
+CHAT_ID = "<default-chat-id>"
+
+```
+
 # How to run
-Set your `bale bot api` you got from @botfather in `config.py`.
 
-You can get the chat id you want the bot to send message to when you go to `web.bale.ai`.
-
-For example this chat is the main one `https://web.bale.ai/chat/6425583673` and the id is `6425583673`. Add "a" between each chat id.
-
-Run a terminal in root of project and run the server:
+Run a terminal in the root of project, then if you want to run flask app, use this command:
 ```
 python3 server.py 
 ```
+And if you want to run telegram bot, run this one:
+```
+python3 telebot.py
+```
+
 Then load the web page on your browser. Set your own configurations and press on the search bottom.
 
 ### Proxies
