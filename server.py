@@ -4,8 +4,7 @@ from main import start_app
 from config import CONFIG
 from db_crud import read_records
 from telebot import client
-from constants import CONST
-
+from teleconfig import CHAT_ID
 
 app = Flask(__name__)
 
@@ -22,7 +21,7 @@ def home():
         CONFIG['house_config']['size']['min'] = int(request.form['size_min'])
 
         client.start()
-        records = start_app(bot=client, chat_id=CONST["chat_id"])
+        records = start_app(bot=client, chat_id=CHAT_ID)
 
         return render_template('home.html', records=records, record_count=len(records),
                                latest_config=CONFIG['house_config'])

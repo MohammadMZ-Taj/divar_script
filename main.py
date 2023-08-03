@@ -1,8 +1,9 @@
-from divar_scrapper import get_all_data, exclude_new_data
+import time
 
+from divar_scrapper import get_all_data, exclude_new_data
 from db_crud import read_records, save_record, update_record
 from db_model import Record
-from constants import CONST
+from teleconfig import CHAT_ID
 
 
 def start_app(bot=None, chat_id=None):
@@ -37,5 +38,10 @@ def start_app(bot=None, chat_id=None):
 
 if __name__ == '__main__':
     from telebot import client
+
+    named_tuple = time.localtime()
+    time_string = time.strftime("%m/%d/%Y, %H:%M:%S", named_tuple)
+
+    print(f"The app started at {time_string}")
     client.start()
-    start_app(bot=client, chat_id=CONST["chat_id"])
+    start_app(bot=client, chat_id=CHAT_ID)
