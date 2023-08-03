@@ -1,5 +1,4 @@
 import time
-
 from divar_scrapper import get_all_data, exclude_new_data
 from db_crud import read_records, save_record, update_record
 from db_model import Record

@@ -5,6 +5,7 @@ from time import sleep
 from teleconfig import *
 from main import start_app
 from config import CONFIG
+from pyrogram.errors.exceptions.flood_420 import FloodWait
 
 client = Client(name=NAME, bot_token=BOT_TOKEN, api_id=API_ID, api_hash=API_HASH, proxy=PROXY)
 
@@ -117,7 +118,7 @@ def send_result(bot, chat_id, data, message=""):
                 'bottom_description_text'] + '\n' + 'متراژ زمین: ' + d['land_area'] + '\n' + 'متراژ: ' + d[
                        'area'] + '\n' + 'ساخت: ' + d['year_of_construction'] + '\n' + 'https://divar.ir/v/' + d[
                        'token'] + '\n' + d['image_url']
-        except Exception:
+        except TypeError:
             text = d.title + '\n' + d.top_description_text + '\n' + d.middle_description_text + '\n' + \
                    d.bottom_description_text + '\n' + 'متراژ زمین: ' + d.land_area + '\n' + 'متراژ: ' + \
                    d.area + '\n' + 'ساخت: ' + d.year_of_construction + '\n' + 'https://divar.ir/v/' + \
@@ -126,20 +127,20 @@ def send_result(bot, chat_id, data, message=""):
         i += 1
         try:
             bot.send_message(chat_id, text)
-        except Exception as e1:
+        except FloodWait as e1:
             e = str(e1).split()
             print(1, i, e1)
             sleep(int(e[8]))
             try:
                 bot.send_message(chat_id, text)
-            except Exception as e2:
+            except FloodWait as e2:
                 print(2, i, e2)
                 not_send.append(d)
     try:
         bot.send_message(chat_id, message,
                          reply_markup=ReplyKeyboardMarkup([['set filter'], ['about'], ['exit']], resize_keyboard=True))
     except Exception as e:
-        print(e)
+        print(e, type(e))
     print(message)
     return not_send
 
